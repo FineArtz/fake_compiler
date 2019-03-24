@@ -1,0 +1,13 @@
+// 2019-03-24
+
+package Types;
+
+public abstract class Type {
+    public Type actual(){
+        return this;
+    }
+
+    public boolean coerceTo(Type t){
+        return false;
+    }
+}
