@@ -1,9 +1,15 @@
-package Parser;// Generated from MxStar.g4 by ANTLR 4.7.2
+// Generated from MxStar.g4 by ANTLR 4.7.2
+
+    package Parser;
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MxStarParser extends Parser {
@@ -96,7 +102,7 @@ public class MxStarParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "Parser/MxStar.g4"; }
+	public String getGrammarFileName() { return "MxStar.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -666,14 +672,11 @@ public class MxStarParser extends Parser {
 	}
 
 	public static class ParamListContext extends ParserRuleContext {
-		public ParamDecContext paramDec() {
-			return getRuleContext(ParamDecContext.class,0);
+		public List<ParamDecContext> paramDec() {
+			return getRuleContexts(ParamDecContext.class);
 		}
-		public List<ParamListContext> paramList() {
-			return getRuleContexts(ParamListContext.class);
-		}
-		public ParamListContext paramList(int i) {
-			return getRuleContext(ParamListContext.class,i);
+		public ParamDecContext paramDec(int i) {
+			return getRuleContext(ParamDecContext.class,i);
 		}
 		public ParamListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -697,29 +700,27 @@ public class MxStarParser extends Parser {
 	public final ParamListContext paramList() throws RecognitionException {
 		ParamListContext _localctx = new ParamListContext(_ctx, getState());
 		enterRule(_localctx, 16, RULE_paramList);
+		int _la;
 		try {
-			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(109);
 			paramDec();
 			setState(114);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					{
-					{
-					setState(110);
-					match(T__7);
-					setState(111);
-					paramList();
-					}
-					} 
+			_la = _input.LA(1);
+			while (_la==T__7) {
+				{
+				{
+				setState(110);
+				match(T__7);
+				setState(111);
+				paramDec();
+				}
 				}
 				setState(116);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
+				_la = _input.LA(1);
 			}
 			}
 		}
@@ -1076,7 +1077,7 @@ public class MxStarParser extends Parser {
 			setState(150);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__3) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << IF) | (1L << FOR) | (1L << WHILE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RETURN) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__3) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << BOOL) | (1L << INT) | (1L << STRING) | (1L << NULL) | (1L << IF) | (1L << FOR) | (1L << WHILE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RETURN) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
 				{
 				{
 				setState(147);
@@ -1129,6 +1130,25 @@ public class MxStarParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MxStarVisitor ) return ((MxStarVisitor<? extends T>)visitor).visitJumpStmt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class VarDefStmtContext extends StmtContext {
+		public VarDefContext varDef() {
+			return getRuleContext(VarDefContext.class,0);
+		}
+		public VarDefStmtContext(StmtContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MxStarListener ) ((MxStarListener)listener).enterVarDefStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MxStarListener ) ((MxStarListener)listener).exitVarDefStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxStarVisitor ) return ((MxStarVisitor<? extends T>)visitor).visitVarDefStmt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1224,25 +1244,6 @@ public class MxStarParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class VarDecStmtContext extends StmtContext {
-		public VarDecContext varDec() {
-			return getRuleContext(VarDecContext.class,0);
-		}
-		public VarDecStmtContext(StmtContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxStarListener ) ((MxStarListener)listener).enterVarDecStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxStarListener ) ((MxStarListener)listener).exitVarDecStmt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MxStarVisitor ) return ((MxStarVisitor<? extends T>)visitor).visitVarDecStmt(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 
 	public final StmtContext stmt() throws RecognitionException {
 		StmtContext _localctx = new StmtContext(_ctx, getState());
@@ -1260,11 +1261,11 @@ public class MxStarParser extends Parser {
 				}
 				break;
 			case 2:
-				_localctx = new VarDecStmtContext(_localctx);
+				_localctx = new VarDefStmtContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(156);
-				varDec();
+				varDef();
 				}
 				break;
 			case 3:
@@ -2876,7 +2877,7 @@ public class MxStarParser extends Parser {
 		"\2\2_\13\3\2\2\2`a\b\7\1\2ab\5\16\b\2bh\3\2\2\2cd\f\3\2\2de\7\b\2\2eg"+
 		"\7\t\2\2fc\3\2\2\2gj\3\2\2\2hf\3\2\2\2hi\3\2\2\2i\r\3\2\2\2jh\3\2\2\2"+
 		"kl\t\2\2\2l\17\3\2\2\2mn\7\'\2\2n\21\3\2\2\2ot\5\24\13\2pq\7\n\2\2qs\5"+
-		"\22\n\2rp\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u\23\3\2\2\2vt\3\2\2\2"+
+		"\24\13\2rp\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u\23\3\2\2\2vt\3\2\2\2"+
 		"wx\5\f\7\2xy\7\64\2\2y\25\3\2\2\2z\177\5\30\r\2{|\7\n\2\2|~\5\30\r\2}"+
 		"{\3\2\2\2~\u0081\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080\27\3\2\2"+
 		"\2\u0081\177\3\2\2\2\u0082\u0085\7\64\2\2\u0083\u0084\7\13\2\2\u0084\u0086"+
@@ -2888,7 +2889,7 @@ public class MxStarParser extends Parser {
 		"\u0093\5\36\20\2\u0093\35\3\2\2\2\u0094\u0098\7\6\2\2\u0095\u0097\5 \21"+
 		"\2\u0096\u0095\3\2\2\2\u0097\u009a\3\2\2\2\u0098\u0096\3\2\2\2\u0098\u0099"+
 		"\3\2\2\2\u0099\u009b\3\2\2\2\u009a\u0098\3\2\2\2\u009b\u009c\7\7\2\2\u009c"+
-		"\37\3\2\2\2\u009d\u00a7\5\36\20\2\u009e\u00a7\5\30\r\2\u009f\u00a0\5\62"+
+		"\37\3\2\2\2\u009d\u00a7\5\36\20\2\u009e\u00a7\5\b\5\2\u009f\u00a0\5\62"+
 		"\32\2\u00a0\u00a1\7\5\2\2\u00a1\u00a7\3\2\2\2\u00a2\u00a7\5\"\22\2\u00a3"+
 		"\u00a7\5(\25\2\u00a4\u00a7\5.\30\2\u00a5\u00a7\7\5\2\2\u00a6\u009d\3\2"+
 		"\2\2\u00a6\u009e\3\2\2\2\u00a6\u009f\3\2\2\2\u00a6\u00a2\3\2\2\2\u00a6"+

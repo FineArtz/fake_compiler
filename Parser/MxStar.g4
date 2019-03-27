@@ -4,6 +4,10 @@
 grammar MxStar;
 import MxStarBasicLexer;
 
+@header{
+    package Parser;
+}
+
 // general structure
 program : definitions* EOF ;
 
@@ -25,7 +29,7 @@ basicType : INT | BOOL | STRING | ID ;
 
 voidType : VOID ;
 
-paramList : paramDec (',' paramList)* ;
+paramList : paramDec (',' paramDec)* ;
 
 paramDec : nonVoidType ID ;
 
@@ -43,7 +47,7 @@ block : '{' stmt* '}' ;
 
 stmt
     : block # blockStmt
-    | varDec # varDecStmt
+    | varDef # varDefStmt
     | expr ';' # exprStmt
     | iffStmt # ifStmt
     | looppStmt # loopStmt

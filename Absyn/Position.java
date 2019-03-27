@@ -7,9 +7,9 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class Position{
-    private final int line;
-    private final int col;
-    private final Interval intv;
+    public int line;
+    public int col;
+    public Interval intv;
 
     Position(int line, int col){
         this.line = line;

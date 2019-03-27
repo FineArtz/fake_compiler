@@ -1,4 +1,7 @@
-package Parser;// Generated from MxStar.g4 by ANTLR 4.7.2
+// Generated from MxStar.g4 by ANTLR 4.7.2
+
+    package Parser;
+
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -219,13 +222,13 @@ public class MxStarBaseListener implements MxStarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarDecStmt(MxStarParser.VarDecStmtContext ctx) { }
+	@Override public void enterVarDefStmt(MxStarParser.VarDefStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarDecStmt(MxStarParser.VarDecStmtContext ctx) { }
+	@Override public void exitVarDefStmt(MxStarParser.VarDefStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

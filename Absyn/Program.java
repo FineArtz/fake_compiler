@@ -9,9 +9,9 @@ public class Program extends Absyn {
     public List<Definitions> defs;
     public Scope scope;
 
-    public Program(List<Definitions> d, Position p){
-        defs = d;
+    public Program(Position p, List<Definitions> d){
         pos = p;
+        defs = d;
     }
 
     @Override

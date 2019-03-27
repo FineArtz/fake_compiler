@@ -1,4 +1,7 @@
-package Parser;// Generated from MxStar.g4 by ANTLR 4.7.2
+// Generated from MxStar.g4 by ANTLR 4.7.2
+
+    package Parser;
+
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -135,7 +138,7 @@ public class MxStarBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVarDecStmt(MxStarParser.VarDecStmtContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVarDefStmt(MxStarParser.VarDefStmtContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

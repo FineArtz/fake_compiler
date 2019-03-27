@@ -7,6 +7,7 @@ public interface ASTVisitor {
 
     void visit(FunctionDef fd);
     void visit(VarDef vd);
+    void visit(VarDefList vl);
     void visit(ClassDef cd);
 
     void visit(BlockStmt bs);

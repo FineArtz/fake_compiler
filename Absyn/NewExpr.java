@@ -15,6 +15,8 @@ public class NewExpr extends Expr {
         assert (!(t.type instanceof ARRAY));
         pos = p;
         type = t;
+        dim = 0;
+        dimExpr = null;
     }
 
     public NewExpr(Position p, Ty t, int d, List<Expr> e){

@@ -1,4 +1,7 @@
-package Parser;// Generated from MxStar.g4 by ANTLR 4.7.2
+// Generated from MxStar.g4 by ANTLR 4.7.2
+
+    package Parser;
+
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -115,12 +118,12 @@ public interface MxStarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlockStmt(MxStarParser.BlockStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code varDecStmt}
+	 * Visit a parse tree produced by the {@code varDefStmt}
 	 * labeled alternative in {@link MxStarParser#stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVarDecStmt(MxStarParser.VarDecStmtContext ctx);
+	T visitVarDefStmt(MxStarParser.VarDefStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exprStmt}
 	 * labeled alternative in {@link MxStarParser#stmt}.

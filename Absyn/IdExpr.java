@@ -5,7 +5,7 @@ package Absyn;
 public class IdExpr extends Expr {
     public String id;
 
-    IdExpr(Position p, String i){
+    public IdExpr(Position p, String i){
         pos = p;
         id = i;
     }

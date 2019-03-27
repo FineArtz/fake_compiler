@@ -7,12 +7,12 @@ import Scope.*;
 import java.util.List;
 
 public class BlockStmt extends Stmt {
-    public List<Stmt> stmts;
+    public List<Absyn> stmts;
     public List<VarDef> varDefs;
     public LocalScope scope;
     // Attention: A BlockStmt begins a new scope!
 
-    public BlockStmt(Position p, List<Stmt> s, List<VarDef> v){
+    public BlockStmt(Position p, List<Absyn> s, List<VarDef> v){
         pos = p;
         stmts = s;
         varDefs = v;

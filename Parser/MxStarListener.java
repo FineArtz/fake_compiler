@@ -1,4 +1,7 @@
-package Parser;// Generated from MxStar.g4 by ANTLR 4.7.2
+// Generated from MxStar.g4 by ANTLR 4.7.2
+
+    package Parser;
+
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -183,17 +186,17 @@ public interface MxStarListener extends ParseTreeListener {
 	 */
 	void exitBlockStmt(MxStarParser.BlockStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code varDecStmt}
+	 * Enter a parse tree produced by the {@code varDefStmt}
 	 * labeled alternative in {@link MxStarParser#stmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterVarDecStmt(MxStarParser.VarDecStmtContext ctx);
+	void enterVarDefStmt(MxStarParser.VarDefStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code varDecStmt}
+	 * Exit a parse tree produced by the {@code varDefStmt}
 	 * labeled alternative in {@link MxStarParser#stmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitVarDecStmt(MxStarParser.VarDecStmtContext ctx);
+	void exitVarDefStmt(MxStarParser.VarDefStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprStmt}
 	 * labeled alternative in {@link MxStarParser#stmt}.
