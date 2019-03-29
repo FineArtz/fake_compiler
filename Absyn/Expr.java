@@ -2,4 +2,7 @@
 
 package Absyn;
 
-abstract public class Expr extends Absyn {}
+abstract public class Expr extends Absyn {
+    public Ty rtype;
+    public boolean lvalue = false;
+}

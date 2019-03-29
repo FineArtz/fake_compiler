@@ -6,9 +6,7 @@ import Absyn.*;
 import Parser.*;
 import Err.SomeError;
 import Types.*;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import sun.plugin.services.AxBridgeBrowserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,8 +187,7 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
             if (s != null){
                 if (s instanceof VarDefList)
                     varDefs.addAll(((VarDefList)s).varList);
-                else
-                    stmts.add(s);
+                stmts.add(s);
             }
         }
         return new BlockStmt(new Position(ctx), stmts, varDefs);
@@ -473,7 +470,7 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
             else
                 throw new SomeError(new Position(ctx), "In visitNewArrayObjExpr: unexpected dim expr");
         }
-        dim = (ctx.getChildCount() - 1 - exprs.size()) / 2;
+        dim = (ctx.getChildCount() - exprs.size() - 1) / 2;
         for (int i = 0; i < dim; ++i)
             elem.type = new ARRAY(elem.type);
         return new NewExpr(new Position(ctx), elem, dim, exprs);

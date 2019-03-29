@@ -11,7 +11,7 @@ public class Position{
     public int col;
     public Interval intv;
 
-    Position(int line, int col){
+    public Position(int line, int col){
         this.line = line;
         this.col = col;
         this.intv = null;

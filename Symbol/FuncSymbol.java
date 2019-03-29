@@ -18,6 +18,8 @@ public class FuncSymbol extends Symbol {
     public FuncSymbol(String n, Type t){
         super(n);
         type = t;
+        pname = null;
+        isConstructor = false;
     }
 
     public FuncSymbol(FunctionDef f){

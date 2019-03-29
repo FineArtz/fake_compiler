@@ -10,7 +10,7 @@ import Types.Type;
 
 public class ClassSymbol extends Symbol {
     public Type type;
-    public Scope scope;
+    public LocalScope scope;
 
     public ClassSymbol(String n, Type t, Scope s){
         super(n);
@@ -22,8 +22,8 @@ public class ClassSymbol extends Symbol {
         super(c.name);
         type = new CLASS(c.name);
         scope = new LocalScope(s);
-        for (FunctionDef f : c.funMem){
-            boolean b = scope.insert(f.name, new FuncSymbol(f, c.name));
-        }
+        /*for (FunctionDef f : c.funMem){
+            scope.insert(f.name, new FuncSymbol(f, c.name));
+        }*/
     }
 }

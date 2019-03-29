@@ -7,6 +7,8 @@ public class NULL extends Type {
 
     @Override
     public boolean coerceTo(Type t){
-        return (t.actual() instanceof NULL);
+        return (t.actual() instanceof NULL
+        || t.actual() instanceof CLASS
+        || t.actual() instanceof ARRAY);
     }
 }
