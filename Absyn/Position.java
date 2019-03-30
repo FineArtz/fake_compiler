@@ -35,6 +35,10 @@ public class Position{
         this.intv = ctx.getSourceInterval();
     }
 
+    public boolean less(Position p){
+        return (line < p.line || (line == p.line && col < p.col));
+    }
+
     @Override
     public String toString(){
         return String.format("(line: %d, col: %d)", line, col);

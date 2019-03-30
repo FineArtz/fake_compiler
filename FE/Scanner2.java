@@ -16,6 +16,7 @@ public class Scanner2 implements ASTVisitor {
     private CLASS nowClass;
     private Type nowFuncType;
     private FuncSymbol nowFunc;
+    private VarSymbol nowVar;
 
     @Override
     public void visit(Program p){
@@ -25,6 +26,7 @@ public class Scanner2 implements ASTVisitor {
         nowClass = null;
         nowFuncType = null;
         nowFunc = null;
+        nowVar = null;
 
         if (p.defs != null) {
             for (Definitions d : p.defs)
@@ -77,9 +79,11 @@ public class Scanner2 implements ASTVisitor {
         }
         else{
             if (vd.init != null) {
+                nowVar = vs;
                 vd.init.accept(this);
-                if (!vs.type.coerceTo(vd.init.rtype.type))
+                if (!vd.init.rtype.type.coerceTo(vs.type))
                     throw new SomeError(vd.pos, "invalid init expression");
+                nowVar = null;
             }
         }
     }
@@ -224,9 +228,9 @@ public class Scanner2 implements ASTVisitor {
         if (mae.expr.rtype.type instanceof CLASS)
             name = ((CLASS)mae.expr.rtype.type).name;
         else if (mae.expr.rtype.type instanceof ARRAY)
-            name = "Array";
+            name = "$Array$";
         else if (mae.expr.rtype.type instanceof STRING)
-            name = "String";
+            name = "$String$";
         else
             throw new SomeError(mae.pos, "unexpected class name");
         topScope.afind(name, new CLASS(name));
@@ -256,7 +260,7 @@ public class Scanner2 implements ASTVisitor {
             throw new SomeError(side.pos, "operand must be INT type");
         if (!side.expr.lvalue)
             throw new SomeError(side.pos, "operand must be lvalue");
-        side.expr.rtype.type = new INT();
+        side.rtype.type = new INT();
     }
 
     @Override
@@ -368,8 +372,12 @@ public class Scanner2 implements ASTVisitor {
 
     @Override
     public void visit(IdExpr ie){
-        Symbol s = nowScope.get(ie.id);
+        Symbol s = nowScope.get(ie.id, ie.pos);
         if (s instanceof VarSymbol){
+            nowScope.afind(s.name, ie.pos);
+            if (nowVar != null)
+                if (nowVar.name.equals(ie.id))
+                    throw new SomeError(String.format("Symbol %s not found", ie.id));
             ie.lvalue = true;
             ie.rtype.type = ((VarSymbol)s).type;
         }

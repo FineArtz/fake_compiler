@@ -2,9 +2,11 @@
 
 package Scope;
 
+import Absyn.Position;
 import Err.SomeError;
 import Symbol.Symbol;
 import Symbol.ClassSymbol;
+import Symbol.VarSymbol;
 import Types.CLASS;
 import Types.Type;
 
@@ -33,6 +35,23 @@ abstract public class Scope{
             return ((LocalScope)this).parent.find(k);
     }
 
+    public boolean find(String k, Position p){
+        if (symbol.containsKey(k)){
+            Symbol s = symbol.get(k);
+            if (!(s instanceof VarSymbol))
+                return true;
+            if (p.less(((VarSymbol)s).pos)){
+                if (this instanceof TopScope)
+                    return false;
+                else
+                    return ((LocalScope)this).parent.find(k, p);
+            }
+            return true;
+        }
+        else
+            return ((LocalScope)this).parent.find(k, p);
+    }
+
     public Symbol get(String k){
         if (!find(k))
             return null;
@@ -44,17 +63,52 @@ abstract public class Scope{
         }
     }
 
+    public Symbol get(String k, Position p){
+        if (!find(k, p))
+            return null;
+        else{
+            if (symbol.containsKey(k)){
+                Symbol s = symbol.get(k);
+                if (!(s instanceof VarSymbol))
+                    return symbol.get(k);
+                if (p.less(((VarSymbol)s).pos)){
+                    if (this instanceof TopScope)
+                        return null;
+                    else
+                        return ((LocalScope)this).parent.get(k, p);
+                }
+                else
+                    return s;
+            }
+            else
+                return ((LocalScope)this).parent.get(k);
+        }
+    }
+
     public void afind(String k){
-        if (!symbol.containsKey(k))
+        if (!find(k))
             throw new SomeError(String.format("Symbol %s not found", k));
     }
 
     public void afind(String k, Type t){
-        if (!symbol.containsKey(k))
+        if (!find(k))
             throw new SomeError(String.format("Symbol %s not found", k));
         Symbol s = symbol.get(k);
         if (t instanceof CLASS && !(s instanceof ClassSymbol))
             throw new SomeError(String.format("Symbol %s not found", k));
+    }
+
+    public void afind(String k, Position p){
+        if (!find(k))
+            throw new SomeError(String.format("Symbol %s not found", k));
+        Symbol s = get(k);
+        if (s instanceof VarSymbol){
+            if (p.less(((VarSymbol)s).pos))
+                if (this instanceof TopScope)
+                    throw new SomeError(String.format("Symbol %s not found", k));
+                else
+                    ((LocalScope)this).parent.afind(k, p);
+        }
     }
 
     public void addChild(LocalScope ls){

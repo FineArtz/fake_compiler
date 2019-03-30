@@ -41,15 +41,15 @@ public class Scanner1 implements ASTVisitor {
         initBuiltinFunc("getInt", topScope, new ArrayList<>(), new INT());
         initBuiltinFunc("toString", topScope, param2, new STRING());
 
-        ClassSymbol str = new ClassSymbol("String", new CLASS("String"), topScope);
-        topScope.insert("String", str);
+        ClassSymbol str = new ClassSymbol("$String$", new CLASS("$String$"), topScope);
+        topScope.insert("$String$", str);
         initBuiltinFunc("length", str.scope, new ArrayList<>(), new INT());
         initBuiltinFunc("parseInt", str.scope, new ArrayList<>(), new INT());
         initBuiltinFunc("ord", str.scope, param2, new INT());
         initBuiltinFunc("substring", str.scope, param3, new STRING());
 
-        ClassSymbol arr = new ClassSymbol("Array", new CLASS("Array"), topScope);
-        topScope.insert("Array", arr);
+        ClassSymbol arr = new ClassSymbol("$Array$", new CLASS("$Array$"), topScope);
+        topScope.insert("$Array$", arr);
         initBuiltinFunc("size", arr.scope, new ArrayList<>(), new INT());
 
         if (p.defs != null) {

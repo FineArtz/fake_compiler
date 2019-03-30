@@ -29,11 +29,13 @@ public class FuncSymbol extends Symbol {
         else
             type = f.result.type;
         params = new ArrayList<>();
-        for (VarDef v : f.params){
-            params.add(new VarSymbol(v));
+        if (f.params != null){
+            for (VarDef v : f.params){
+                params.add(new VarSymbol(v));
+            }
         }
         pname = null;
-        isConstructor = false;
+        isConstructor = f.isConstructor;
     }
 
     public FuncSymbol(FunctionDef f, String p){
