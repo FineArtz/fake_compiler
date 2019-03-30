@@ -8,12 +8,14 @@ import Symbol.ClassSymbol;
 import Types.CLASS;
 import Types.Type;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 abstract public class Scope{
-    public List<LocalScope> children;
-    public Map<String, Symbol> symbol;
+    public List<LocalScope> children = new ArrayList<>();
+    public Map<String, Symbol> symbol = new HashMap<>();
 
     public void insert(String k, Symbol v){
         if (symbol.containsKey(k))
@@ -34,8 +36,12 @@ abstract public class Scope{
     public Symbol get(String k){
         if (!find(k))
             return null;
-        else
-            return symbol.get(k);
+        else{
+            if (symbol.containsKey(k))
+                return symbol.get(k);
+            else
+                return ((LocalScope)this).parent.get(k);
+        }
     }
 
     public void afind(String k){

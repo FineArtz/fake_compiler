@@ -117,4 +117,4 @@ newObjExpr
     | ID ('(' ')')? # newNonArrayObjExpr
     ;
 
-literal : INT_LITERAL | STR_LITERAL | BOOL_LITERAL | NULL ;
+literal : INT_LITERAL | STR_LITERAL | TRUE | FALSE | NULL ;

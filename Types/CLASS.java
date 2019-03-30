@@ -11,6 +11,9 @@ public class CLASS extends Type {
 
     @Override
     public boolean coerceTo(Type t){
-        return (t.actual() == this);
+        if (t instanceof CLASS)
+            return name.equals(((CLASS)t).name);
+        else
+            return false;
     }
 }

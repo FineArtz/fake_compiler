@@ -12,6 +12,7 @@ public interface ASTVisitor {
 
     void visit(BlockStmt bs);
     void visit(IfStmt is);
+    void visit(ExprStmt es);
     void visit(ForStmt fs);
     void visit(WhileStmt ws);
     void visit(ContinueStmt cs);

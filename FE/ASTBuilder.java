@@ -21,12 +21,16 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
     public Absyn visitProgram(MxStarParser.ProgramContext ctx){
         List<Definitions> defs = new ArrayList<>();
 
-        for (ParseTree child : ctx.definitions()){
-            Absyn res = visit(child);
-            if (res instanceof Definitions)
-                defs.add((Definitions)res);
-            else
-                throw new SomeError(new Position(ctx), "In visitProgram: unexpected children type");
+        if (ctx.definitions() != null) {
+            for (ParseTree child : ctx.definitions()) {
+                Absyn res = visit(child);
+                if (res instanceof Definitions)
+                    defs.add((Definitions) res);
+                else if (res instanceof VarDefList)
+                    defs.addAll(((VarDefList)res).varList);
+                else
+                    throw new SomeError(new Position(ctx), "In visitProgram: unexpected children type");
+            }
         }
         return new Program(new Position(ctx), defs);
     }
@@ -52,12 +56,14 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
 
         name = ctx.ID().getText();
         Absyn param;
-        for (ParseTree p : ctx.paramList().paramDec()){
-            param = visit(p);
-            params.add((VarDef)param);
+        if (ctx.paramList() != null) {
+            for (ParseTree p : ctx.paramList().paramDec()) {
+                param = visit(p);
+                params.add((VarDef) param);
+            }
         }
         if (ctx.voidType() != null)
-            retTy = null;
+            retTy = new Ty(new Position(ctx), new VOID());
         else
             retTy = (Ty)visit(ctx.nonVoidType());
         body = (BlockStmt)visit(ctx.block());
@@ -69,6 +75,28 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
     public Absyn visitVarDef(MxStarParser.VarDefContext ctx){
         nowTy = (Ty)visit(ctx.nonVoidType());
         return visit(ctx.varDecList());
+    }
+
+    @Override
+    public Absyn visitClassDef(MxStarParser.ClassDefContext ctx){
+        String name;
+        List<VarDef> vars = new ArrayList<>();
+        List<FunctionDef> funs = new ArrayList<>();
+
+        name = ctx.ID().getText();
+        Absyn a;
+        if (ctx.classMembers() != null){
+            for (ParseTree p : ctx.classMembers()){
+                a = visit(p);
+                if (a instanceof VarDefList)
+                    vars.addAll(((VarDefList)a).varList);
+                else if (a instanceof FunctionDef)
+                    funs.add((FunctionDef)a);
+                else
+                    throw new SomeError(new Position(ctx), "unexpected class member");
+            }
+        }
+        return new ClassDef(new Position(ctx), name, vars, funs);
     }
 
     @Override
@@ -123,12 +151,14 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
         List<VarDef> varDefs = new ArrayList<>();
 
         Absyn v;
-        for (ParseTree p : ctx.varDec()){
-            v = visit(p);
-            if (v instanceof VarDef)
-                varDefs.add((VarDef)v);
-            else
-                throw new SomeError(new Position(ctx), "In visitVarDecList: unexpected Absyn");
+        if (ctx.varDec() != null) {
+            for (ParseTree p : ctx.varDec()) {
+                v = visit(p);
+                if (v instanceof VarDef)
+                    varDefs.add((VarDef) v);
+                else
+                    throw new SomeError(new Position(ctx), "In visitVarDecList: unexpected Absyn");
+            }
         }
         return new VarDefList(new Position(ctx), varDefs);
     }
@@ -182,12 +212,14 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
         List<VarDef> varDefs = new ArrayList<>();
 
         Absyn s;
-        for (ParseTree p : ctx.stmt()){
-            s = visit(p);
-            if (s != null){
-                if (s instanceof VarDefList)
-                    varDefs.addAll(((VarDefList)s).varList);
-                stmts.add(s);
+        if (ctx.stmt() != null) {
+            for (ParseTree p : ctx.stmt()) {
+                s = visit(p);
+                if (s != null) {
+                    if (s instanceof VarDefList)
+                        varDefs.addAll(((VarDefList) s).varList);
+                    stmts.add(s);
+                }
             }
         }
         return new BlockStmt(new Position(ctx), stmts, varDefs);
@@ -205,7 +237,8 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
 
     @Override
     public Absyn visitExprStmt(MxStarParser.ExprStmtContext ctx){
-        return visit(ctx.expr());
+        Expr expr = (Expr)visit(ctx.expr());
+        return new ExprStmt(new Position(ctx), expr);
     }
 
     @Override
@@ -383,7 +416,7 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
 
     @Override
     public Absyn visitBinaryExpr(MxStarParser.BinaryExprContext ctx){
-        Absyn.BinaryExpr.OP op;
+        BinaryExpr.OP op;
         Expr l;
         Expr r;
 
@@ -427,12 +460,14 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
 
         func = (Expr)visit(ctx.expr());
         Absyn v;
-        for (ParseTree p : ctx.exprs().expr()){
-            v = visit(p);
-            if (v instanceof Expr)
-                args.add((Expr) v);
-            else
-                throw new SomeError(new Position(ctx), "In visitFuncCallExpr: unexpected argument");
+        if (ctx.exprs() != null){
+            for (ParseTree p : ctx.exprs().expr()){
+                v = visit(p);
+                if (v instanceof Expr)
+                    args.add((Expr) v);
+                else
+                    throw new SomeError(new Position(ctx), "In visitFuncCallExpr: unexpected argument");
+            }
         }
         return new FunCallExpr(new Position(ctx), func, args);
     }
@@ -456,20 +491,22 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
     }
 
     @Override
-    public Absyn visitNewArrayObjExpr(MxStarParser.NewArrayObjExprContext ctx){
+    public Absyn visitNewArrayObjExpr(MxStarParser.NewArrayObjExprContext ctx) {
         Ty elem;
         int dim;
         List<Expr> exprs = new ArrayList<>();
 
-        elem = (Ty)visit(ctx.basicType());
+        elem = (Ty) visit(ctx.basicType());
         Absyn expr;
-        for (ParseTree p : ctx.expr()){
-            expr = visit(p);
-            if (expr instanceof Expr)
-                exprs.add((Expr)expr);
-            else
-                throw new SomeError(new Position(ctx), "In visitNewArrayObjExpr: unexpected dim expr");
-        }
+        if (ctx.expr() != null){
+            for (ParseTree p : ctx.expr()) {
+                expr = visit(p);
+                if (expr instanceof Expr)
+                    exprs.add((Expr) expr);
+                else
+                    throw new SomeError(new Position(ctx), "In visitNewArrayObjExpr: unexpected dim expr");
+            }
+    }
         dim = (ctx.getChildCount() - exprs.size() - 1) / 2;
         for (int i = 0; i < dim; ++i)
             elem.type = new ARRAY(elem.type);
@@ -506,17 +543,11 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
             }
             return new IntExpr(new Position(ctx), v);
         }
-        else if (ctx.BOOL_LITERAL() != null){
-            boolean v;
-
-            String vv = ctx.BOOL_LITERAL().getText();
-            if (vv.equals("true"))
-                v = true;
-            else if (vv.equals("false"))
-                v = false;
-            else
-                throw new SomeError(new Position(ctx), "In visitLiteral: illegal bool literal");
-            return new BoolExpr(new Position(ctx), v);
+        else if (ctx.TRUE() != null){
+            return new BoolExpr(new Position(ctx), true);
+        }
+        else if (ctx.FALSE() != null){
+            return new BoolExpr(new Position(ctx), false);
         }
         else if (ctx.STR_LITERAL() != null){
             String v;
@@ -526,7 +557,7 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
             for (int i = 1; i < vv.length() - 1; ++i){
                 if (i < vv.length() - 2 && vv.charAt(i) == '\\'){
                     char c = vv.charAt(i + 1);
-                    if (c == '\n')
+                    if (c == 'n')
                         s.append('\n');
                     else if (c == '\"')
                         s.append('\"');

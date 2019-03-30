@@ -26,8 +26,10 @@ public class Scanner2 implements ASTVisitor {
         nowFuncType = null;
         nowFunc = null;
 
-        for (Definitions d : p.defs)
-            d.accept(this);
+        if (p.defs != null) {
+            for (Definitions d : p.defs)
+                d.accept(this);
+        }
     }
 
     @Override
@@ -42,8 +44,10 @@ public class Scanner2 implements ASTVisitor {
         // check parameters
         checkParam = true;
         nowScope = fd.body.scope;
-        for (VarDef vd : fd.params)
-            vd.accept(this);
+        if (fd.params != null) {
+            for (VarDef vd : fd.params)
+                vd.accept(this);
+        }
         nowScope = ((LocalScope)nowScope).parent;
         checkParam = false;
         // check constructor
@@ -72,16 +76,20 @@ public class Scanner2 implements ASTVisitor {
                 throw new SomeError(vd.pos, "params cannot be default initialized");
         }
         else{
-            vd.init.accept(this);
-            if (!vs.type.coerceTo(vd.init.rtype.type))
-                throw new SomeError(vd.pos, "invalid init expression");
+            if (vd.init != null) {
+                vd.init.accept(this);
+                if (!vs.type.coerceTo(vd.init.rtype.type))
+                    throw new SomeError(vd.pos, "invalid init expression");
+            }
         }
     }
 
     @Override
     public void visit(VarDefList vl){
-        for (VarDef vd : vl.varList)
-            vd.accept(this);
+        if (vl.varList != null) {
+            for (VarDef vd : vl.varList)
+                vd.accept(this);
+        }
     }
 
     @Override
@@ -91,10 +99,14 @@ public class Scanner2 implements ASTVisitor {
             throw new SomeError(cd.pos, "unknown error");
         nowScope = cs.scope;
         nowClass = (CLASS)cs.type;
-        for (VarDef vd : cd.varMem)
-            vd.accept(this);
-        for (FunctionDef fd : cd.funMem)
-            fd.accept(this);
+        if (cd.varMem != null) {
+            for (VarDef vd : cd.varMem)
+                vd.accept(this);
+        }
+        if (cd.funMem != null) {
+            for (FunctionDef fd : cd.funMem)
+                fd.accept(this);
+        }
         nowClass = null;
         nowScope = cs.scope.parent;
     }
@@ -102,8 +114,10 @@ public class Scanner2 implements ASTVisitor {
     @Override
     public void visit(BlockStmt bs){
         nowScope = bs.scope;
-        for (Absyn a : bs.stmts){
-            a.accept(this);
+        if (bs.stmts != null) {
+            for (Absyn a : bs.stmts) {
+                a.accept(this);
+            }
         }
         nowScope = bs.scope.parent;
     }
@@ -119,6 +133,11 @@ public class Scanner2 implements ASTVisitor {
         if (is.elseClause != null) {
             is.elseClause.accept(this);
         }
+    }
+
+    @Override
+    public void visit(ExprStmt es){
+        es.expr.accept(this);
     }
 
     @Override
@@ -182,19 +201,20 @@ public class Scanner2 implements ASTVisitor {
         fce.func.accept(this);
         if (nowFunc == null)
             throw new SomeError(fce.pos, "non-callable object");
-        fce.funcSymbol = nowFunc;
+        FuncSymbol thisFunc = nowFunc;
+        fce.funcSymbol = thisFunc;
         // check args number
-        if (nowFunc.params.size() != fce.args.size())
+        if (thisFunc.params.size() != fce.args.size())
             throw new SomeError(fce.pos, "inconsistent argument number");
         // check args type
-        for (int i = 0; i < nowFunc.params.size(); ++i){
+        for (int i = 0; i < thisFunc.params.size(); ++i){
             fce.args.get(i).accept(this);
             if (fce.args.get(i).rtype.type == null
             || fce.args.get(i).rtype.type instanceof VOID
-            || !fce.args.get(i).rtype.type.coerceTo(nowFunc.params.get(i).type))
+            || !fce.args.get(i).rtype.type.coerceTo(thisFunc.params.get(i).type))
                 throw new SomeError(fce.args.get(i).pos, "invalid argument type");
         }
-        fce.rtype.type = nowFunc.type;
+        fce.rtype.type = thisFunc.type;
     }
 
     @Override
@@ -270,7 +290,7 @@ public class Scanner2 implements ASTVisitor {
             case 0: case 1: // Inc, Dec
                 if (!(ue.expr.rtype.type instanceof INT))
                     throw new SomeError(ue.pos, "operand must be INT type");
-                if (!ue.lvalue)
+                if (!ue.expr.lvalue)
                     throw new SomeError(ue.pos, "operand must be lvalue");
                 ue.rtype.type = new INT();
                 ue.lvalue = true;
@@ -309,14 +329,19 @@ public class Scanner2 implements ASTVisitor {
                 be.rtype.type = new INT();
                 break;
             case ADD:
-            case LES: case LTE: case GRT: case GTE:
                 if (!((be.lhs.rtype.type instanceof INT && be.rhs.rtype.type instanceof INT)
-                || (be.lhs.rtype.type instanceof STRING && be.rhs.rtype.type instanceof STRING)))
+                        || (be.lhs.rtype.type instanceof STRING && be.rhs.rtype.type instanceof STRING)))
                     throw new SomeError(be.pos, "operands must be INT or STRING type");
                 if (be.lhs.rtype.type instanceof INT)
                     be.rtype.type = new INT();
                 else
                     be.rtype.type = new STRING();
+                break;
+            case LES: case LTE: case GRT: case GTE:
+                if (!((be.lhs.rtype.type instanceof INT && be.rhs.rtype.type instanceof INT)
+                || (be.lhs.rtype.type instanceof STRING && be.rhs.rtype.type instanceof STRING)))
+                    throw new SomeError(be.pos, "operands must be INT or STRING type");
+                be.rtype.type = new BOOL();
                 break;
             case EQL: case NEQ:
                 if (!be.lhs.rtype.type.coerceTo(be.rhs.rtype.type)

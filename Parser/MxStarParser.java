@@ -1077,7 +1077,7 @@ public class MxStarParser extends Parser {
 			setState(150);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__3) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << BOOL) | (1L << INT) | (1L << STRING) | (1L << NULL) | (1L << IF) | (1L << FOR) | (1L << WHILE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RETURN) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__3) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << BOOL) | (1L << INT) | (1L << STRING) | (1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << FOR) | (1L << WHILE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RETURN) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) {
 				{
 				{
 				setState(147);
@@ -1593,7 +1593,7 @@ public class MxStarParser extends Parser {
 			setState(186);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) {
 				{
 				setState(185);
 				((ForStmtContext)_localctx).init = expr(0);
@@ -1605,7 +1605,7 @@ public class MxStarParser extends Parser {
 			setState(190);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) {
 				{
 				setState(189);
 				((ForStmtContext)_localctx).cond = expr(0);
@@ -1617,7 +1617,7 @@ public class MxStarParser extends Parser {
 			setState(194);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) {
 				{
 				setState(193);
 				((ForStmtContext)_localctx).step = expr(0);
@@ -1791,7 +1791,7 @@ public class MxStarParser extends Parser {
 				setState(209);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) {
 					{
 					setState(208);
 					expr(0);
@@ -2240,9 +2240,10 @@ public class MxStarParser extends Parser {
 				}
 				break;
 			case NULL:
+			case TRUE:
+			case FALSE:
 			case INT_LITERAL:
 			case STR_LITERAL:
-			case BOOL_LITERAL:
 				{
 				_localctx = new LiteralExprContext(_localctx);
 				_ctx = _localctx;
@@ -2478,7 +2479,7 @@ public class MxStarParser extends Parser {
 						setState(280);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << THIS) | (1L << ID) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) {
 							{
 							setState(279);
 							exprs();
@@ -2730,7 +2731,8 @@ public class MxStarParser extends Parser {
 	public static class LiteralContext extends ParserRuleContext {
 		public TerminalNode INT_LITERAL() { return getToken(MxStarParser.INT_LITERAL, 0); }
 		public TerminalNode STR_LITERAL() { return getToken(MxStarParser.STR_LITERAL, 0); }
-		public TerminalNode BOOL_LITERAL() { return getToken(MxStarParser.BOOL_LITERAL, 0); }
+		public TerminalNode TRUE() { return getToken(MxStarParser.TRUE, 0); }
+		public TerminalNode FALSE() { return getToken(MxStarParser.FALSE, 0); }
 		public TerminalNode NULL() { return getToken(MxStarParser.NULL, 0); }
 		public LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2760,7 +2762,7 @@ public class MxStarParser extends Parser {
 			{
 			setState(324);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NULL) | (1L << INT_LITERAL) | (1L << STR_LITERAL) | (1L << BOOL_LITERAL))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NULL) | (1L << TRUE) | (1L << FALSE) | (1L << INT_LITERAL) | (1L << STR_LITERAL))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -2861,10 +2863,10 @@ public class MxStarParser extends Parser {
 		"\n\33\f\33\16\33\u013b\13\33\3\33\3\33\3\33\3\33\3\33\3\33\5\33\u0143"+
 		"\n\33\5\33\u0145\n\33\3\34\3\34\3\34\2\4\f\62\35\2\4\6\b\n\f\16\20\22"+
 		"\24\26\30\32\34\36 \"$&(*,.\60\62\64\66\2\n\4\2#%\64\64\3\2\r\16\3\2\17"+
-		"\20\3\2\23\25\3\2\26\27\3\2\30\33\3\2\34\35\4\2&&\65\67\2\u0169\2;\3\2"+
-		"\2\2\4C\3\2\2\2\6G\3\2\2\2\bQ\3\2\2\2\nU\3\2\2\2\f`\3\2\2\2\16k\3\2\2"+
-		"\2\20m\3\2\2\2\22o\3\2\2\2\24w\3\2\2\2\26z\3\2\2\2\30\u0082\3\2\2\2\32"+
-		"\u008a\3\2\2\2\34\u008c\3\2\2\2\36\u0094\3\2\2\2 \u00a6\3\2\2\2\"\u00a8"+
+		"\20\3\2\23\25\3\2\26\27\3\2\30\33\3\2\34\35\5\2&&()\65\66\2\u0169\2;\3"+
+		"\2\2\2\4C\3\2\2\2\6G\3\2\2\2\bQ\3\2\2\2\nU\3\2\2\2\f`\3\2\2\2\16k\3\2"+
+		"\2\2\20m\3\2\2\2\22o\3\2\2\2\24w\3\2\2\2\26z\3\2\2\2\30\u0082\3\2\2\2"+
+		"\32\u008a\3\2\2\2\34\u008c\3\2\2\2\36\u0094\3\2\2\2 \u00a6\3\2\2\2\"\u00a8"+
 		"\3\2\2\2$\u00b1\3\2\2\2&\u00b3\3\2\2\2(\u00b7\3\2\2\2*\u00b9\3\2\2\2,"+
 		"\u00c9\3\2\2\2.\u00d8\3\2\2\2\60\u00da\3\2\2\2\62\u00f4\3\2\2\2\64\u0144"+
 		"\3\2\2\2\66\u0146\3\2\2\28:\5\4\3\298\3\2\2\2:=\3\2\2\2;9\3\2\2\2;<\3"+

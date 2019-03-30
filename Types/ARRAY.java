@@ -11,6 +11,9 @@ public class ARRAY extends Type {
 
     @Override
     public boolean coerceTo(Type t){
-        return (t.actual() == this);
+        if (t instanceof ARRAY)
+            return element.coerceTo(((ARRAY)t).element);
+        else
+            return false;
     }
 }

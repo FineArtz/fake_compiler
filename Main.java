@@ -26,12 +26,13 @@ public class Main {
             is = System.in;
 
         Compiler compiler = new Compiler(is);
-        try {
+        compiler.compile();
+        /*try {
             compiler.compile();
         }
         catch (Error e){
             System.err.println(e.getMessage());
             System.exit(-1);
-        }
+        }*/
     }
 }

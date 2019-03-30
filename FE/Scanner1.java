@@ -31,6 +31,10 @@ public class Scanner1 implements ASTVisitor {
         param1.add(new VarSymbol("s", new STRING(), new Position(0, 0)));
         List<VarSymbol> param2 = new ArrayList<>();
         param2.add(new VarSymbol("i", new INT(), new Position(0, 0)));
+        List<VarSymbol> param3 = new ArrayList<>();
+        param3.add(new VarSymbol("i", new INT(), new Position(0, 0)));
+        param3.add(new VarSymbol("j", new INT(), new Position(0, 0)));
+
         initBuiltinFunc("print", topScope, param1, new VOID());
         initBuiltinFunc("println", topScope, param1, new VOID());
         initBuiltinFunc("getString", topScope, new ArrayList<>(), new STRING());
@@ -38,25 +42,30 @@ public class Scanner1 implements ASTVisitor {
         initBuiltinFunc("toString", topScope, param2, new STRING());
 
         ClassSymbol str = new ClassSymbol("String", new CLASS("String"), topScope);
+        topScope.insert("String", str);
         initBuiltinFunc("length", str.scope, new ArrayList<>(), new INT());
         initBuiltinFunc("parseInt", str.scope, new ArrayList<>(), new INT());
         initBuiltinFunc("ord", str.scope, param2, new INT());
-        param2.add(new VarSymbol("j", new INT(), new Position(0, 0)));
-        initBuiltinFunc("substring", str.scope, param2, new STRING());
+        initBuiltinFunc("substring", str.scope, param3, new STRING());
 
         ClassSymbol arr = new ClassSymbol("Array", new CLASS("Array"), topScope);
+        topScope.insert("Array", arr);
         initBuiltinFunc("size", arr.scope, new ArrayList<>(), new INT());
 
-        for (Definitions d : p.defs){
-            if (d instanceof ClassDef){
-                topScope.insert(((ClassDef)d).name, new ClassSymbol((ClassDef)d, topScope));
+        if (p.defs != null) {
+            for (Definitions d : p.defs) {
+                if (d instanceof ClassDef) {
+                    topScope.insert(((ClassDef) d).name, new ClassSymbol((ClassDef) d, topScope));
+                }
             }
         }
 
         nowScope = topScope;
         nowClass = null;
-        for (Definitions d : p.defs){
-            d.accept(this);
+        if (p.defs != null) {
+            for (Definitions d : p.defs) {
+                d.accept(this);
+            }
         }
 
         FuncSymbol m = (FuncSymbol)topScope.get("main");
@@ -75,12 +84,13 @@ public class Scanner1 implements ASTVisitor {
         if (nowClass != null)
             fs.pname = nowClass.name;
         nowScope.insert(fd.name, fs);
-        LocalScope ls = new LocalScope(nowScope);
-        nowScope = ls;
-        for (VarDef vd : fd.params)
-            vd.accept(this);
-        nowScope = ls.parent;
         fd.body.accept(this);
+        nowScope = fd.body.scope;
+        if (fd.params != null) {
+            for (VarDef vd : fd.params)
+                vd.accept(this);
+        }
+        nowScope = ((LocalScope)nowScope).parent;
     }
 
     @Override
@@ -96,8 +106,10 @@ public class Scanner1 implements ASTVisitor {
 
     @Override
     public void visit(VarDefList vl){
-        for (VarDef vd : vl.varList)
-            vd.accept(this);
+        if (vl.varList != null) {
+            for (VarDef vd : vl.varList)
+                vd.accept(this);
+        }
     }
 
     @Override
@@ -107,10 +119,14 @@ public class Scanner1 implements ASTVisitor {
         cs.scope.insert("this", vs);
         nowScope = cs.scope;
         nowClass = (CLASS)cs.type;
-        for (VarDef vd : cd.varMem)
-            vd.accept(this);
-        for (FunctionDef fd : cd.funMem)
-            fd.accept(this);
+        if (cd.varMem != null) {
+            for (VarDef vd : cd.varMem)
+                vd.accept(this);
+        }
+        if (cd.funMem != null) {
+            for (FunctionDef fd : cd.funMem)
+                fd.accept(this);
+        }
         nowClass = null;
         nowScope = cs.scope.parent;
     }
@@ -119,9 +135,11 @@ public class Scanner1 implements ASTVisitor {
     public void visit(BlockStmt bs){
         bs.setNewScope(nowScope);
         nowScope = bs.scope;
-        for (Absyn a : bs.stmts){
-            assert (a instanceof VarDef || a instanceof Stmt);
-            a.accept(this);
+        if (bs.stmts != null) {
+            for (Absyn a : bs.stmts) {
+                assert (a instanceof VarDef || a instanceof Stmt);
+                a.accept(this);
+            }
         }
         nowScope = bs.scope.parent;
     }
@@ -135,6 +153,9 @@ public class Scanner1 implements ASTVisitor {
             is.elseClause.accept(this);
         }
     }
+
+    @Override
+    public void visit(ExprStmt es){}
 
     @Override
     public void visit(ForStmt fs){
