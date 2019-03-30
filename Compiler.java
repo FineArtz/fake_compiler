@@ -4,6 +4,7 @@ import Absyn.Program;
 import FE.ASTBuilder;
 import FE.Scanner1;
 import FE.Scanner2;
+import FE.SomeErrorListener;
 import Parser.MxStarLexer;
 import Parser.MxStarParser;
 import org.antlr.v4.runtime.CharStream;
@@ -26,6 +27,8 @@ public class Compiler {
         MxStarLexer lexer = new MxStarLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MxStarParser parser = new MxStarParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new SomeErrorListener());
         ParseTree tree = parser.program();
         ASTBuilder astb = new ASTBuilder();
         ast = (Program)astb.visit(tree);
