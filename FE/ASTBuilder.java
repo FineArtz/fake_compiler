@@ -301,7 +301,6 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
         Expr x;
         Expr y;
         Expr z;
-        Stmt b;
 
         if (ctx.init != null)
             x = (Expr)visit(ctx.init);
@@ -315,18 +314,41 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
             z = (Expr)visit(ctx.step);
         else
             z = null;
-        b = (Stmt)visit(ctx.stmt());
-        return new ForStmt(new Position(ctx), x, y, z, b);
+        Absyn s = visit(ctx.stmt());
+        if (!(s instanceof BlockStmt)){
+            List<Absyn> la = new ArrayList<>();
+            List<VarDef> lv = new ArrayList<>();
+            la.add(s);
+            if (s instanceof VarDef)
+                lv.add((VarDef)s);
+            else if (s instanceof VarDefList)
+                lv.addAll(((VarDefList)s).varList);
+            BlockStmt bs = new BlockStmt(s.pos, la, lv);
+            return new ForStmt(new Position(ctx), x, y, z, bs);
+        }
+        else
+            return new ForStmt(new Position(ctx), x, y, z, (Stmt)s);
     }
 
     @Override
     public Absyn visitWhileStmt(MxStarParser.WhileStmtContext ctx){
         Expr t;
-        Stmt b;
 
         t = (Expr)visit(ctx.cond);
-        b = (Stmt)visit(ctx.stmt());
-        return new WhileStmt(new Position(ctx), t, b);
+        Absyn s = visit(ctx.stmt());
+        if (!(s instanceof BlockStmt)){
+            List<Absyn> la = new ArrayList<>();
+            List<VarDef> lv = new ArrayList<>();
+            la.add(s);
+            if (s instanceof VarDef)
+                lv.add((VarDef)s);
+            else if (s instanceof VarDefList)
+                lv.addAll(((VarDefList)s).varList);
+            BlockStmt bs = new BlockStmt(s.pos, la, lv);
+            return new WhileStmt(new Position(ctx), t, bs);
+        }
+        else
+            return new WhileStmt(new Position(ctx), t, (Stmt)s);
     }
 
     @Override

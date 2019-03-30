@@ -48,8 +48,12 @@ abstract public class Scope{
             }
             return true;
         }
-        else
-            return ((LocalScope)this).parent.find(k, p);
+        else{
+            if (this instanceof TopScope)
+                return false;
+            else
+                return ((LocalScope)this).parent.find(k, p);
+        }
     }
 
     public Symbol get(String k){

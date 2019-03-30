@@ -54,7 +54,7 @@ public class Scanner2 implements ASTVisitor {
         checkParam = false;
         // check constructor
         if (fs.isConstructor){
-            if (nowClass == null || !fs.pname.equals(nowClass.name))
+            if (nowClass == null || !fs.name.equals(nowClass.name))
                 throw new SomeError(fd.pos,"Constructor must have the same name as class");
         }
         else if (fs.type == null)
@@ -180,9 +180,8 @@ public class Scanner2 implements ASTVisitor {
 
     @Override
     public void visit(RetStmt rs){
-        assert (nowFuncType != null);
         if (rs.expr == null){
-            if (!(nowFuncType instanceof VOID))
+            if (nowFuncType != null && !(nowFuncType instanceof VOID))
                 throw new SomeError(rs.pos, "non-void function must have return value");
         }
         else{
