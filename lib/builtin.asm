@@ -21,6 +21,7 @@ global str_lte
 global parseInt
 global ord
 global substring
+global main
 global REG_SIZE
 
 extern strcmp
@@ -796,6 +797,14 @@ L_053:  mov     eax, dword [rbp-10H]
         mov     rax, qword [rbp-8H]
         add     rax, rdx
         leave
+        ret
+
+
+main:
+        push    rbp
+        mov     rbp, rsp
+        mov     eax, 0
+        pop     rbp
         ret
 
 
