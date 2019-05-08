@@ -14,7 +14,9 @@ public class CALL extends Inst {
         func = f;
         args = a;
         dest = d;
-        reloadRegs();
+        if (!f.isBuiltIn) {
+            reloadRegs();
+        }
     }
 
     public void addArg(Reg a) {

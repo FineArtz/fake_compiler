@@ -183,7 +183,10 @@ public class Eliminator {
                     if (((MOVE)i).getDest() == ((MOVE)i).getSrc()) {
                         flag = true;
                     }
-                    else if (pred instanceof MOVE && ((MOVE)i).isSame((MOVE)pred)) {
+                    else if (pred instanceof MOVE && ((MOVE)i).getDest() == ((MOVE)pred).getDest()) {
+                        flag = true;
+                    }
+                    else if (pred instanceof MOVE && ((MOVE)i).getDest() == ((MOVE)pred).getSrc() && ((MOVE)i).getSrc() == ((MOVE)pred).getDest()) {
                         flag = true;
                     }
                 }
@@ -198,6 +201,14 @@ public class Eliminator {
     }
 
     public void run() {
+        if (root.data.isEmpty()) {
+            Function m = root.funcs.get("main");
+            Inst i = m.getHead().getHead();
+            if (i instanceof CALL) {
+                i.remove();
+            }
+            root.funcs.remove("__init__");
+        }
         for (Function f : root.funcs.values()) {
             la.analyseFunction(f);
         }

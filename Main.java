@@ -1,9 +1,6 @@
 // 2019-03-29
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws Exception{
@@ -39,7 +36,16 @@ public class Main {
         compiler.allocate();
         compiler.transform();
         compiler.eliminate(1);
+        //FileOutputStream fos = new FileOutputStream("src/out.asm");
+        //compiler.generate(fos);
+        //fos.close();
         compiler.generate(System.out);
-        
+        /*try {
+            compiler.compile();
+        }
+        catch (Error e){
+            System.err.println(e.getMessage());
+            System.exit(-1);
+        }*/
     }
 }

@@ -5,8 +5,7 @@ package BE;
 import Err.SomeError;
 import IR.*;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 public class CodePrinter implements IRVisitor {
@@ -27,11 +26,10 @@ public class CodePrinter implements IRVisitor {
     private Set<BasicBlock> visited = new HashSet<>();
     private Map<BasicBlock, String> labels = new HashMap<>();
     private Map<StaticData, String> sdata = new HashMap<>();
-    private Map<VirtualReg, String> regMap = new HashMap<>();
-    private Map<String, Integer> regCount = new HashMap<>();
     private Map<String, Integer> bbCount = new HashMap<>();
     private boolean inStatic;
     private boolean isDest;
+    private boolean hasBracket;
     private PhysicalReg pr1, pr2;
 
     @Override
@@ -41,7 +39,6 @@ public class CodePrinter implements IRVisitor {
         pr2 = ir.pr2;
 
         // head
-        addLine("%include \"./lib/builtin.asm\"");
         addLine("global main");
         addLine("extern malloc");
         addLine("");
@@ -58,9 +55,11 @@ public class CodePrinter implements IRVisitor {
         if (!ir.strs.isEmpty()) {
             addLine("SECTION .data\t\talign=8");
             moreIndent();
+            inStatic = true;
             for (StaticString ss : ir.strs.values()) {
                 ss.accept(this);
             }
+            inStatic = false;
             lessIndent();
             addLine("");
         }
@@ -79,6 +78,9 @@ public class CodePrinter implements IRVisitor {
         }
 
         addLine("");
+
+        // lib
+        addLib();
 
         out.print(code.toString());
     }
@@ -103,8 +105,6 @@ public class CodePrinter implements IRVisitor {
 
     @Override
     public void visit(Function f) {
-        regMap = new IdentityHashMap<>();
-        regCount = new HashMap<>();
         addRawLine("# function ".concat(f.getName()));
         for (BasicBlock b : f.getrPostOrder()) {
             moreIndent();
@@ -124,6 +124,9 @@ public class CodePrinter implements IRVisitor {
         BINOP.OP op = bo.getOp();
         Reg lhs = bo.getLhs();
         Reg rhs = bo.getRhs();
+        if (lhs instanceof CONST && rhs instanceof CONST) {
+            return;
+        }
         CommonReg dest = bo.getDest();
         switch (op) {
             case SLA:
@@ -237,7 +240,7 @@ public class CodePrinter implements IRVisitor {
         add(", ");
         rhs.accept(this);
         addLine("");
-        switch (cm.getOp()) {
+        switch (op) {
             case LES:
                 opname = "setl";
                 break;
@@ -285,6 +288,7 @@ public class CodePrinter implements IRVisitor {
             l.getDest().accept(this);
             isDest = false;
             add(", ".concat(size(l.getSize())).concat("["));
+            hasBracket = true;
             l.getAddr().accept(this);
             if (l.getOffset() < 0) {
                 add(String.valueOf(l.getOffset()));
@@ -292,6 +296,7 @@ public class CodePrinter implements IRVisitor {
             else if (l.getOffset() > 0) {
                 add("+".concat(String.valueOf(l.getOffset())));
             }
+            hasBracket = false;
             add("]\n");
         }
     }
@@ -361,6 +366,7 @@ public class CodePrinter implements IRVisitor {
         }
         else {
             addWithIndent("mov ".concat(size(s.getSize())).concat("["));
+            hasBracket = true;
             s.getAddr().accept(this);
             if (s.getOffset() < 0) {
                 add(String.valueOf(s.getOffset()));
@@ -368,6 +374,7 @@ public class CodePrinter implements IRVisitor {
             else if (s.getOffset() > 0) {
                 add("+".concat(String.valueOf(s.getOffset())));
             }
+            hasBracket = false;
             add("], ");
             s.getValue().accept(this);
             addLine("");
@@ -463,7 +470,12 @@ public class CodePrinter implements IRVisitor {
             addLine(getID(sp).concat(": ").concat(size(sp)).concat(" 1"));
         }
         else {
-            add(getID(sp));
+            if (!hasBracket) {
+                add("[".concat(getID(sp)).concat("]"));
+            }
+            else {
+                add(getID(sp));
+            }
         }
     }
 
@@ -489,6 +501,19 @@ public class CodePrinter implements IRVisitor {
 
     private void addWithIndent(String s) {
         code.append(indent.concat(s));
+    }
+
+    private void addLib() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("./lib/builtin.asm"));
+            String s = br.readLine();
+            while (s != null) {
+                code.append(s.concat("\n"));
+                s = br.readLine();
+            }
+        } catch (IOException e) {
+            throw new SomeError("lib file does not exit");
+        }
     }
 
     private String size(int s) {

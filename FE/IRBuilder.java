@@ -738,14 +738,14 @@ public class IRBuilder implements ASTVisitor {
             }
             case "getString": {
                 VirtualReg reg = new VirtualReg("getString");
-                CALL call = new CALL(nowBB, root.builtinFuncs.get("getString"), null, reg);
+                CALL call = new CALL(nowBB, root.builtinFuncs.get("getString"), new ArrayList<>(), reg);
                 nowBB.addInst(call);
                 fce.value = reg;
                 break;
             }
             case "getInt": {
                 VirtualReg reg = new VirtualReg("getInt");
-                CALL call = new CALL(nowBB, root.builtinFuncs.get("getInt"), null, reg);
+                CALL call = new CALL(nowBB, root.builtinFuncs.get("getInt"), new ArrayList<>(), reg);
                 nowBB.addInst(call);
                 fce.value = reg;
                 break;

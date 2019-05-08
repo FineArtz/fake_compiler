@@ -152,7 +152,7 @@ public class IRPrinter implements IRVisitor {
         else {
             printWithIndent(String.format("call %s ", c.getFunc().getName()));
         }
-        if (!c.getArgs().isEmpty()) {
+        if (c.getArgs() != null && !c.getArgs().isEmpty()) {
             for (Reg r : c.getArgs()) {
                 r.accept(this);
                 printRaw(" ");

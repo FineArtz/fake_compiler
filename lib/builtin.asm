@@ -1,11 +1,3 @@
-
-
-
-
-
-
-default rel
-
 global print
 global println
 global printInt
@@ -800,15 +792,6 @@ L_053:  mov     eax, dword [rbp-10H]
         ret
 
 
-main:
-        push    rbp
-        mov     rbp, rsp
-        mov     eax, 0
-        pop     rbp
-        ret
-
-
-
 SECTION .data   
 
 
@@ -822,5 +805,4 @@ REG_SIZE:
 
 L_054:
         db 25H, 73H, 00H
-
 
