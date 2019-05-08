@@ -3,11 +3,11 @@
 package Absyn;
 
 public class StringExpr extends Expr {
-    public String value;
+    public String val;
 
     public StringExpr(Position p, String v){
         pos = p;
-        value = v;
+        val = v;
     }
 
     @Override

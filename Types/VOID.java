@@ -9,4 +9,9 @@ public class VOID extends Type {
     public boolean coerceTo(Type t){
         return (t.actual() instanceof VOID);
     }
+
+    @Override
+    public int getSize() {
+        return VOID_SIZE;
+    }
 }

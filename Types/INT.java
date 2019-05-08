@@ -9,4 +9,9 @@ public class INT extends Type {
     public boolean coerceTo(Type t){
         return (t.actual() instanceof INT);
     }
+
+    @Override
+    public int getSize() {
+        return INT_SIZE;
+    }
 }

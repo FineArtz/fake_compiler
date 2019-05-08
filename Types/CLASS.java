@@ -16,4 +16,9 @@ public class CLASS extends Type {
         else
             return false;
     }
+
+    @Override
+    public int getSize() {
+        return POINTER_SIZE;
+    }
 }

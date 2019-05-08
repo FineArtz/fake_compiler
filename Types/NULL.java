@@ -11,4 +11,9 @@ public class NULL extends Type {
         || t.actual() instanceof CLASS
         || t.actual() instanceof ARRAY);
     }
+
+    @Override
+    public int getSize() {
+        return VOID_SIZE;
+    }
 }

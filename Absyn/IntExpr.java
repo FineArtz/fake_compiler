@@ -3,11 +3,11 @@
 package Absyn;
 
 public class IntExpr extends Expr {
-    public int value;
+    public int val;
 
     public IntExpr(Position p, int v){
         pos = p;
-        value = v;
+        val = v;
     }
 
     @Override

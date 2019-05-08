@@ -11,6 +11,7 @@ import Types.Type;
 public class ClassSymbol extends Symbol {
     public Type type;
     public LocalScope scope;
+    public int memorySize;
 
     public ClassSymbol(String n, Type t, Scope s){
         super(n);

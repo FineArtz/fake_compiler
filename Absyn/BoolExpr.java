@@ -3,11 +3,11 @@
 package Absyn;
 
 public class BoolExpr extends Expr {
-    public boolean value;
+    public boolean val;
 
     public BoolExpr(Position p, boolean v){
         pos = p;
-        value = v;
+        val = v;
     }
 
     @Override

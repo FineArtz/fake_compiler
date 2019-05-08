@@ -318,12 +318,14 @@ public class ASTBuilder extends MxStarBaseVisitor<Absyn> {
         if (!(s instanceof BlockStmt)){
             List<Absyn> la = new ArrayList<>();
             List<VarDef> lv = new ArrayList<>();
-            la.add(s);
+            if (s != null) {
+                la.add(s);
+            }
             if (s instanceof VarDef)
                 lv.add((VarDef)s);
             else if (s instanceof VarDefList)
                 lv.addAll(((VarDefList)s).varList);
-            BlockStmt bs = new BlockStmt(s.pos, la, lv);
+            BlockStmt bs = new BlockStmt((s == null ? new Position(ctx) : s.pos), la, lv);
             return new ForStmt(new Position(ctx), x, y, z, bs);
         }
         else

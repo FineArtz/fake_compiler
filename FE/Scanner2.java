@@ -379,6 +379,7 @@ public class Scanner2 implements ASTVisitor {
                     throw new SomeError(String.format("Symbol %s not found", ie.id));
             ie.lvalue = true;
             ie.rtype.type = ((VarSymbol)s).type;
+            ie.var = (VarSymbol)s;
         }
         else if (s instanceof FuncSymbol){
             nowFunc = (FuncSymbol)s;

@@ -9,4 +9,9 @@ public class STRING extends Type {
     public boolean coerceTo(Type t){
         return (t.actual() instanceof STRING);
     }
+
+    @Override
+    public int getSize() {
+        return POINTER_SIZE;
+    }
 }

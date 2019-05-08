@@ -1,5 +1,7 @@
 // 2019-03-29
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -26,13 +28,18 @@ public class Main {
             is = System.in;
 
         Compiler compiler = new Compiler(is);
-        compiler.compile();
-        /*try {
-            compiler.compile();
-        }
-        catch (Error e){
-            System.err.println(e.getMessage());
-            System.exit(-1);
-        }*/
+        compiler.buildAST();
+        compiler.buildIR();
+        compiler.eliminate(0);
+        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //compiler.printIR(baos);
+        //System.out.println(baos);
+        //ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        //compiler.testIR(bais, false);
+        compiler.allocate();
+        compiler.transform();
+        compiler.eliminate(1);
+        compiler.generate(System.out);
+        
     }
 }

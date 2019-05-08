@@ -15,12 +15,21 @@ public class Scanner1 implements ASTVisitor {
     public TopScope topScope = new TopScope();
     private Scope nowScope;
     private CLASS nowClass;
+    private final Position virtualPos = new Position(0, 0);
+    private int offset;
+    private boolean isClassMemberVar;
 
-    private void initBuiltinFunc(String n, Scope s, List<VarSymbol> p, Type t){
+    private void initBuiltinFunc(String n, Scope s, List<VarSymbol> p, Type t, int i){
         FuncSymbol f = new FuncSymbol(n, t);
         f.params = p;
-        if (!(s instanceof TopScope)){
-            f.pname = "String";
+        if (i == 0) {
+            f.pname = null;
+        }
+        else if (i == 1) {
+            f.pname = "$String$";
+        }
+        else if (i == 2) {
+            f.pname = "$Array$";
         }
         s.insert(n, f);
     }
@@ -28,29 +37,29 @@ public class Scanner1 implements ASTVisitor {
     @Override
     public void visit(Program p){
         List<VarSymbol> param1 = new ArrayList<>();
-        param1.add(new VarSymbol("s", new STRING(), new Position(0, 0)));
+        param1.add(new VarSymbol("s", new STRING(), virtualPos));
         List<VarSymbol> param2 = new ArrayList<>();
-        param2.add(new VarSymbol("i", new INT(), new Position(0, 0)));
+        param2.add(new VarSymbol("i", new INT(), virtualPos));
         List<VarSymbol> param3 = new ArrayList<>();
-        param3.add(new VarSymbol("i", new INT(), new Position(0, 0)));
-        param3.add(new VarSymbol("j", new INT(), new Position(0, 0)));
+        param3.add(new VarSymbol("i", new INT(), virtualPos));
+        param3.add(new VarSymbol("j", new INT(), virtualPos));
 
-        initBuiltinFunc("print", topScope, param1, new VOID());
-        initBuiltinFunc("println", topScope, param1, new VOID());
-        initBuiltinFunc("getString", topScope, new ArrayList<>(), new STRING());
-        initBuiltinFunc("getInt", topScope, new ArrayList<>(), new INT());
-        initBuiltinFunc("toString", topScope, param2, new STRING());
+        initBuiltinFunc("print", topScope, param1, new VOID(), 0);
+        initBuiltinFunc("println", topScope, param1, new VOID(), 0);
+        initBuiltinFunc("getString", topScope, new ArrayList<>(), new STRING(), 0);
+        initBuiltinFunc("getInt", topScope, new ArrayList<>(), new INT(), 0);
+        initBuiltinFunc("toString", topScope, param2, new STRING(), 0);
 
         ClassSymbol str = new ClassSymbol("$String$", new CLASS("$String$"), topScope);
         topScope.insert("$String$", str);
-        initBuiltinFunc("length", str.scope, new ArrayList<>(), new INT());
-        initBuiltinFunc("parseInt", str.scope, new ArrayList<>(), new INT());
-        initBuiltinFunc("ord", str.scope, param2, new INT());
-        initBuiltinFunc("substring", str.scope, param3, new STRING());
+        initBuiltinFunc("length", str.scope, new ArrayList<>(), new INT(), 1);
+        initBuiltinFunc("parseInt", str.scope, new ArrayList<>(), new INT(), 1);
+        initBuiltinFunc("ord", str.scope, param2, new INT(), 1);
+        initBuiltinFunc("substring", str.scope, param3, new STRING(), 1);
 
         ClassSymbol arr = new ClassSymbol("$Array$", new CLASS("$Array$"), topScope);
         topScope.insert("$Array$", arr);
-        initBuiltinFunc("size", arr.scope, new ArrayList<>(), new INT());
+        initBuiltinFunc("size", arr.scope, new ArrayList<>(), new INT(), 2);
 
         if (p.defs != null) {
             for (Definitions d : p.defs) {
@@ -62,6 +71,7 @@ public class Scanner1 implements ASTVisitor {
 
         nowScope = topScope;
         nowClass = null;
+        isClassMemberVar = false;
         if (p.defs != null) {
             for (Definitions d : p.defs) {
                 d.accept(this);
@@ -98,8 +108,12 @@ public class Scanner1 implements ASTVisitor {
         VarSymbol vs = new VarSymbol(vd);
         if (nowScope instanceof TopScope)
             vs.isGlobal = true;
-        if (nowClass != null)
+        if (isClassMemberVar) {
+            assert(nowClass != null);
             vs.pname = nowClass.name;
+            vs.offset = offset;
+            offset = offset + vd.type.type.getSize();
+        }
         assert (vs.isGlobal != (vs.pname == null));
         nowScope.insert(vd.name, vs);
     }
@@ -115,14 +129,19 @@ public class Scanner1 implements ASTVisitor {
     @Override
     public void visit(ClassDef cd){
         ClassSymbol cs = (ClassSymbol)topScope.get(cd.name);
-        VarSymbol vs = new VarSymbol("this", new CLASS(cd.name), new Position(0, 0));
+        VarSymbol vs = new VarSymbol("this", new CLASS(cd.name), virtualPos);
         cs.scope.insert("this", vs);
         nowScope = cs.scope;
         nowClass = (CLASS)cs.type;
+        offset = 0;
+        isClassMemberVar = true;
         if (cd.varMem != null) {
             for (VarDef vd : cd.varMem)
                 vd.accept(this);
         }
+        isClassMemberVar = false;
+        cs.memorySize = offset;
+        offset = 0;
         if (cd.funMem != null) {
             for (FunctionDef fd : cd.funMem)
                 fd.accept(this);

@@ -9,4 +9,9 @@ public class BOOL extends Type {
     public boolean coerceTo(Type t){
         return (t.actual() instanceof BOOL);
     }
+
+    @Override
+    public int getSize() {
+        return BOOL_SIZE;
+    }
 }

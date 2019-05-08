@@ -3,7 +3,7 @@
 package Absyn;
 
 public class BinaryExpr extends Expr {
-    public enum OP{
+    public enum OP {
         MUL,    // *
         DIV,    // /
         MOD,    // %

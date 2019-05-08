@@ -4,6 +4,7 @@ package Symbol;
 
 import Absyn.Position;
 import Absyn.VarDef;
+import IR.Reg;
 import Types.Type;
 
 public class VarSymbol extends Symbol {
@@ -11,6 +12,8 @@ public class VarSymbol extends Symbol {
     public String pname;
     public Position pos;
     public boolean isGlobal;
+    public Reg reg;
+    public int offset;
 
     public VarSymbol(String n, Type t, Position p){
         super(n);
