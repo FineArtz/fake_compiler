@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class MOVE extends Inst {
     private CommonReg dest;
     private Reg src;
@@ -47,5 +49,13 @@ public class MOVE extends Inst {
     @Override
     public void setDefinedReg(CommonReg r) {
         dest = r;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (src instanceof CommonReg) {
+            src = map.get(src);
+        }
+        reloadRegs();
     }
 }

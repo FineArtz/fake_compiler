@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class BINOP extends Inst {
     public enum OP {
         MUL,    // *
@@ -88,5 +90,16 @@ public class BINOP extends Inst {
     @Override
     public void setDefinedReg(CommonReg r) {
         dest = r;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (lhs instanceof CommonReg) {
+            lhs = map.get(lhs);
+        }
+        if (rhs instanceof CommonReg) {
+            rhs = map.get(rhs);
+        }
+        reloadRegs();
     }
 }

@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class ALLOC extends Inst {
     private CommonReg dest;
     private Reg size;
@@ -45,5 +47,11 @@ public class ALLOC extends Inst {
         dest = r;
     }
 
-
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (size instanceof CommonReg) {
+            size = map.get(size);
+        }
+        reloadRegs();
+    }
 }

@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class RETURN extends JumpInst {
     private Reg retVal;
 
@@ -39,5 +41,15 @@ public class RETURN extends JumpInst {
     @Override
     public void setDefinedReg(CommonReg r) {
         assert false;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (retVal != null) {
+            if (retVal instanceof CommonReg) {
+                retVal = map.get(retVal);
+            }
+        }
+        reloadRegs();
     }
 }

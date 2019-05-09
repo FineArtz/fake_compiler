@@ -6,10 +6,16 @@ public class StackSlot extends CommonReg {
     private Function func;
     private String name;
 
-    public StackSlot(Function f, String n) {
+    public StackSlot(Function f, String n, boolean a) {
         func = f;
         name = n;
-        f.slots.add(this);
+        if (!a) {
+            f.slots.add(this);
+        }
+    }
+
+    public StackSlot(Function f, String n) {
+        this(f, n, false);
     }
 
     public Function getFunc() {

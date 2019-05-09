@@ -62,4 +62,7 @@ public class PhiInst extends Inst {
     public void remove() {
         block.phi.remove(dest);
     }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
 }

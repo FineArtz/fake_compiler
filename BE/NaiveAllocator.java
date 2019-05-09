@@ -23,6 +23,17 @@ public class NaiveAllocator {
         availableRegs.remove(NASMRegSet.R11);
     }
 
+    private Map<VirtualReg, StackSlot> slotMap = new HashMap<>();
+
+    private StackSlot getSlot(Function f, VirtualReg vr) {
+        StackSlot slot = slotMap.get(vr);
+        if (slot == null) {
+            slot = new StackSlot(f, vr.name);
+            slotMap.put(vr, slot);
+        }
+        return slot;
+    }
+
     private void allocateFunction(Function f) {
         if (f.isBuiltIn) {
             return;
@@ -99,6 +110,10 @@ public class NaiveAllocator {
         }
 */
 
+        slotMap.clear();
+        slotMap.putAll(f.argSlots);
+        Map<CommonReg, CommonReg> rename = new HashMap<>();
+
         for (BasicBlock b : f.getrPostOrder()) {
             for (Inst i = b.getHead(); i != null; i = i.getSucc()) {
                 int cnt = 0;
@@ -108,29 +123,32 @@ public class NaiveAllocator {
                     for (int j = 0; j < args.size(); ++j) {
                         Reg reg = args.get(j);
                         if (reg instanceof VirtualReg) {
-                            if (((VirtualReg)reg).slot == null) {
-                                ((VirtualReg)reg).slot = new StackSlot(f, ((VirtualReg)reg).name);
-                            }
+                            CommonReg addr = getSlot(f, (VirtualReg)reg);
+                            args.set(j, addr);
                         }
                     }
                 }
                 else {
                     List<CommonReg> regs = i.getUsedReg();
                     if (!regs.isEmpty()) {
+                        rename.clear();
+                        for (CommonReg reg : regs) {
+                            rename.put(reg, reg);
+                        }
                         for (CommonReg reg : regs) {
                             if (reg instanceof VirtualReg) {
                                 PhysicalReg preg = ((VirtualReg)reg).preg;
                                 if (preg == null) {
                                     preg = availableRegs.get(cnt++);
                                 }
-                                ((VirtualReg)reg).preg = preg;
+                                rename.put(reg, preg);
                                 f.pregs.add(preg);
-                                if (((VirtualReg)reg).slot == null) {
-                                    ((VirtualReg)reg).slot = new StackSlot(f, ((VirtualReg)reg).name);
-                                }
-                                i.insertPred(new LOAD(b, preg, Type.POINTER_SIZE, ((VirtualReg)reg).slot, 0));
+                                ((VirtualReg)reg).preg = preg;
+                                CommonReg addr = getSlot(f, (VirtualReg)reg);
+                                i.insertPred(new LOAD(b, preg, Type.POINTER_SIZE, addr, 0));
                             }
                         }
+                        i.renameUsedReg(rename);
                     }
                 }
 
@@ -140,11 +158,10 @@ public class NaiveAllocator {
                     if (preg == null) {
                         preg = availableRegs.get(cnt++);
                     }
+                    f.pregs.add(preg);
                     i.setDefinedReg(preg);
-                    if (((VirtualReg)defined).slot == null) {
-                        ((VirtualReg)defined).slot = new StackSlot(f, ((VirtualReg)defined).name);
-                    }
-                    i.insertSucc(new STORE(b, preg, Type.POINTER_SIZE, ((VirtualReg)defined).slot, 0));
+                    CommonReg addr = getSlot(f, (VirtualReg)defined);
+                    i.insertSucc(new STORE(b, preg, Type.POINTER_SIZE, addr, 0));
                     i = i.getSucc();
                 }
             }

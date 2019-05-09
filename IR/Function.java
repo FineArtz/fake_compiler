@@ -15,6 +15,7 @@ public class Function {
     public Set<PhysicalReg> pregs = new HashSet<>();
     public Set<PhysicalReg> gpregs = new HashSet<>();
     public List<StackSlot> slots = new ArrayList<>();
+    public Map<VirtualReg, StackSlot> argSlots = new HashMap<>();
     public boolean isBuiltIn;
 
     // CFG info

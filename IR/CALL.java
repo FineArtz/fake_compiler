@@ -3,6 +3,7 @@
 package IR;
 
 import java.util.List;
+import java.util.Map;
 
 public class CALL extends Inst {
     private Function func;
@@ -14,9 +15,7 @@ public class CALL extends Inst {
         func = f;
         args = a;
         dest = d;
-        if (!f.isBuiltIn) {
-            reloadRegs();
-        }
+        reloadRegs();
     }
 
     public void addArg(Reg a) {
@@ -61,5 +60,15 @@ public class CALL extends Inst {
     @Override
     public void setDefinedReg(CommonReg r) {
         dest = r;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        for (int i = 0; i < args.size(); ++i) {
+            if (args.get(i) instanceof CommonReg) {
+                args.set(i, map.get(args.get(i)));
+            }
+        }
+        reloadRegs();
     }
 }

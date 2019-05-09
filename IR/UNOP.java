@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class UNOP extends Inst {
     public enum OP {
         NEG,    // -
@@ -59,5 +61,13 @@ public class UNOP extends Inst {
     @Override
     public void setDefinedReg(CommonReg r) {
         dest = r;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (operand instanceof CommonReg) {
+            operand = map.get(operand);
+        }
+        reloadRegs();
     }
 }

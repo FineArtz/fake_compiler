@@ -2,11 +2,14 @@
 
 package IR;
 
+import java.util.Map;
+
 public class STORE extends Inst {
     private Reg value;
     private int size;
     private Reg addr;
     private int offset;
+    private boolean isStatic;
 
     public STORE(BasicBlock b, Reg v, int s, Reg a, int o) {
         super(b);
@@ -14,7 +17,13 @@ public class STORE extends Inst {
         size = s;
         addr = a;
         offset = o;
+        isStatic = false;
         reloadRegs();
+    }
+
+    public STORE(BasicBlock b, Reg v, int s, StaticData a) {
+        this(b, v, s, a, 0);
+        isStatic = true;
     }
 
     public Reg getAddr() {
@@ -45,6 +54,10 @@ public class STORE extends Inst {
         return (value == s.value && size == s.size && addr == s.addr && offset == s.offset);
     }
 
+    public boolean isStatic() {
+        return isStatic;
+    }
+
     @Override
     public void accept(IRVisitor v) {
         v.visit(this);
@@ -70,5 +83,16 @@ public class STORE extends Inst {
     @Override
     public void setDefinedReg(CommonReg r) {
         assert false;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (value instanceof CommonReg) {
+            value = map.get(value);
+        }
+        if (addr instanceof CommonReg && !(addr instanceof StackSlot)) {
+            addr = map.get(addr);
+        }
+        reloadRegs();
     }
 }

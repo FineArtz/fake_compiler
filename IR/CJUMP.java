@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class CJUMP extends JumpInst {
     private Reg cond;
     private BasicBlock thenBB, elseBB;
@@ -56,5 +58,13 @@ public class CJUMP extends JumpInst {
     @Override
     public void setDefinedReg(CommonReg r) {
         assert false;
+    }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {
+        if (cond instanceof CommonReg) {
+            cond = map.get(cond);
+        }
+        reloadRegs();
     }
 }

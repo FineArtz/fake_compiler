@@ -6,6 +6,7 @@ import Err.SomeError;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Inst {
@@ -89,4 +90,5 @@ public abstract class Inst {
     public abstract void reloadRegs();
     public abstract CommonReg getDefinedReg();
     public abstract void setDefinedReg(CommonReg r);
+    public abstract void renameUsedReg(Map<CommonReg, CommonReg> map);
 }

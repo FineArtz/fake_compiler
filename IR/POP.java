@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class POP extends Inst {
     private PhysicalReg preg;
 
@@ -37,4 +39,7 @@ public class POP extends Inst {
     public void setDefinedReg(CommonReg r) {
         assert false;
     }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
 }

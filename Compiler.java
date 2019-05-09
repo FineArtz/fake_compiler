@@ -61,6 +61,11 @@ class Compiler {
         System.out.print(String.format("ExitCode: %d.", iri.getExitCode()));
     }
 
+    void preTransform() {
+        PreTransformer pt = new PreTransformer(ir);
+        pt.run();
+    }
+
     void eliminate(int x) {
         Eliminator e = new Eliminator(ir);
         if (x == 0) {

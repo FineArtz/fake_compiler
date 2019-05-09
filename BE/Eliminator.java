@@ -204,9 +204,10 @@ public class Eliminator {
         if (root.data.isEmpty()) {
             Function m = root.funcs.get("main");
             Inst i = m.getHead().getHead();
-            if (i instanceof CALL) {
-                i.remove();
+            while (!(i instanceof CALL && ((CALL)i).getFunc().getName().equals("__init__"))) {
+                i = i.getSucc();
             }
+            i.remove();
             root.funcs.remove("__init__");
         }
         for (Function f : root.funcs.values()) {

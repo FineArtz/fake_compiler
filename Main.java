@@ -6,27 +6,46 @@ public class Main {
     public static void main(String[] args) throws Exception{
         boolean inFile = false;
         String fileName = null;
+        boolean nasmFile = false;
+        String nasmName = null;
 
-        for (int i = 0; i < args.length; ++i){
+        for (int i = 0; i < args.length; ++i) {
             switch (args[i]){
                 case "-f": case "--file":
-                    if (i < args.length - 1){
+                    if (i < args.length - 1) {
                         inFile = true;
                         fileName = args[i + 1];
                     }
+                    break;
+                case "--print-nasm":
+                    nasmFile = true;
+                    nasmName = "src/out.asm";
                     break;
             }
         }
 
         InputStream is;
-        if (inFile)
+        if (inFile) {
             is = new FileInputStream(fileName);
-        else
+        }
+        else {
             is = System.in;
+        }
+        OutputStream os;
+        if (nasmFile) {
+            os = new FileOutputStream(nasmName);
+        }
+        else {
+            os = System.out;
+        }
 
         Compiler compiler = new Compiler(is);
+        if (is instanceof FileInputStream) {
+            is.close();
+        }
         compiler.buildAST();
         compiler.buildIR();
+        compiler.preTransform();
         compiler.eliminate(0);
         //ByteArrayOutputStream baos = new ByteArrayOutputStream();
         //compiler.printIR(baos);
@@ -36,10 +55,10 @@ public class Main {
         compiler.allocate();
         compiler.transform();
         compiler.eliminate(1);
-        //FileOutputStream fos = new FileOutputStream("src/out.asm");
-        //compiler.generate(fos);
-        //fos.close();
-        compiler.generate(System.out);
+        compiler.generate(os);
+        if (os instanceof FileOutputStream) {
+            os.close();
+        }
         /*try {
             compiler.compile();
         }

@@ -106,6 +106,9 @@ public class CodePrinter implements IRVisitor {
     @Override
     public void visit(Function f) {
         addRawLine("# function ".concat(f.getName()));
+        if (f.getName().equals("main")) {
+            addRawLine("main:");
+        }
         for (BasicBlock b : f.getrPostOrder()) {
             moreIndent();
             b.accept(this);
@@ -153,7 +156,7 @@ public class CodePrinter implements IRVisitor {
                 addWithIndent("mov rbx, ");
                 rhs.accept(this);
                 addLine("");
-                addWithIndent("mov rax");
+                addWithIndent("mov rax, ");
                 lhs.accept(this);
                 addLine("");
                 addLine("mov ".concat(pr1.getName()).concat(", rdx"));

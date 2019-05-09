@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.Map;
+
 public class JUMP extends JumpInst {
     private BasicBlock target;
 
@@ -35,4 +37,7 @@ public class JUMP extends JumpInst {
     public void setDefinedReg(CommonReg r) {
         assert false;
     }
+
+    @Override
+    public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
 }
