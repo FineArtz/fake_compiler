@@ -13,7 +13,6 @@ import Symbol.FuncSymbol;
 import Symbol.VarSymbol;
 import Types.*;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,19 +76,21 @@ public class IRBuilder implements ASTVisitor {
         }
 
         for (Function f : root.funcs.values()) {
-            f.updateCallee();
+            f.updateCallee(root);
         }
         root.updateRCallee();
     }
 
     @Override
     public void visit(FunctionDef fd) {
-        nowFunc = new Function(new FuncSymbol(fd));
-        if (nowClass == null) {
-            root.funcs.put(fd.name, nowFunc);
+        String funcName = fd.name;
+        if (nowClass != null) {
+            funcName = nowClass.name + "." + funcName;
         }
-        else {
-            root.funcs.put(nowClass.name + "." + fd.name, nowFunc);
+        nowFunc = root.funcs.get(funcName);
+        if (nowFunc == null) {
+            nowFunc = new Function(new FuncSymbol(fd));
+            root.funcs.put(funcName, nowFunc);
         }
         nowBB = nowFunc.getHead();
 
@@ -734,7 +735,7 @@ public class IRBuilder implements ASTVisitor {
         switch (fce.funcSymbol.name) {
             case "print":
             case "println": {
-                processPrint(fce.args.get(0), fce.funcSymbol == root.builtinFuncs.get("println").getFunc());
+                processPrint(fce.args.get(0), fce.funcSymbol.name.equals("println"));
                 break;
             }
             case "getString": {

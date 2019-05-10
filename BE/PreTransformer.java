@@ -9,6 +9,7 @@ import java.util.*;
 
 public class PreTransformer {
     private IRRoot root;
+    private Function f;
 
     public PreTransformer(IRRoot r) {
         root = r;
@@ -32,7 +33,7 @@ public class PreTransformer {
         return vr;
     }
 
-    private void dataInFunction(Function f) {
+    private void dataInFunction() {
         FuncInfo fi = new FuncInfo();
         funcInfo.put(f, fi);
         Map<CommonReg, CommonReg> rename = new HashMap<>();
@@ -79,7 +80,7 @@ public class PreTransformer {
         }
     }
 
-    private void calcrUse(Function f) {
+    private void calcrUse() {
         FuncInfo fi = funcInfo.get(f);
         fi.ruseStatic.addAll(fi.staticReg.keySet());
         fi.rdefStatic.addAll(fi.writtenStatic);
@@ -142,12 +143,14 @@ public class PreTransformer {
     }
 
     private void transformStaticData() {
-        for (Function f : root.funcs.values()) {
-            dataInFunction(f);
+        for (Function ff : root.funcs.values()) {
+            f = ff;
+            dataInFunction();
         }
         putBuiltinFunc();
-        for (Function f : root.funcs.values()) {
-            calcrUse(f);
+        for (Function ff : root.funcs.values()) {
+            f = ff;
+            calcrUse();
         }
 
         Set<StaticData> reload = new HashSet<>();

@@ -36,6 +36,10 @@ public class CALL extends Inst {
         return func;
     }
 
+    public void setFunc(Function func) {
+        this.func = func;
+    }
+
     @Override
     public void accept(IRVisitor v) {
         v.visit(this);

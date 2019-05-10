@@ -80,6 +80,9 @@ public class TargetTransformer {
                 inst.insertPred(new PUSH(entry, pr));
             }
         }
+        else {
+            inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
+        }
         // RBP = RSP
         inst.insertPred(new MOVE(entry, NASMRegSet.RBP, NASMRegSet.RSP));
         // RSP = RSP - offset

@@ -2,6 +2,7 @@
 
 package IR;
 
+import Err.SomeError;
 import Symbol.FuncSymbol;
 import Types.STRING;
 
@@ -212,12 +213,20 @@ public class Function {
         }
     }
 
-    public void updateCallee() {
+    public void updateCallee(IRRoot root) {
         callee.clear();
         for (BasicBlock bb : getrPostOrder()) {
             for (Inst i = bb.getHead(); i != null; i = i.getSucc()) {
                 if (i instanceof CALL) {
-                    callee.add(((CALL)i).getFunc());
+                    Function e = root.funcs.get(((CALL)i).getFunc().getName());
+                    if (e == null) {
+                        e = root.builtinFuncs.get(((CALL)i).getFunc().getName());
+                        if (e == null) {
+                            throw new SomeError("In updateCallee: unexpected error");
+                        }
+                    }
+                    callee.add(e);
+                    ((CALL)i).setFunc(e);
                 }
             }
         }
