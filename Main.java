@@ -37,6 +37,8 @@ public class Main {
         }
 
         OutputStream os;
+        nasmFile = true;
+        nasmName = "src/out.asm";
         if (nasmFile) {
             os = new FileOutputStream(nasmName);
         }

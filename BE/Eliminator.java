@@ -270,7 +270,7 @@ public class Eliminator {
                 }
                 eliminate(f);
                 forEliminate();
-                whileEliminate(f);
+                //whileEliminate(f);
                 BBEliminate(f);
                 if (changed) {
                     f.clearOrder();

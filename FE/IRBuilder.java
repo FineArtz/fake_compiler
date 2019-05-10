@@ -1007,6 +1007,7 @@ public class IRBuilder implements ASTVisitor {
                         bop = BINOP.OP.SLA;
                         be.value = reg;
                         nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(1), reg));
+                        return;
                     }
                 }
                 bop = BINOP.OP.MUL;
@@ -1025,6 +1026,7 @@ public class IRBuilder implements ASTVisitor {
                         bop = BINOP.OP.SRA;
                         be.value = reg;
                         nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(1), reg));
+                        return;
                     }
                 }
                 bop = BINOP.OP.DIV;

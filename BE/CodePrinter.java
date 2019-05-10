@@ -145,7 +145,7 @@ public class CodePrinter implements IRVisitor {
                     addWithIndent("sar ");
                 }
                 lhs.accept(this);
-                add(", c1\n");
+                add(", cl\n");
                 addLine("mov rcx, rbx");
                 addWithIndent("and ");
                 dest.accept(this);
