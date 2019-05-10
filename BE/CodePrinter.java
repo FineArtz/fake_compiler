@@ -293,11 +293,19 @@ public class CodePrinter implements IRVisitor {
             add(", ".concat(size(l.getSize())).concat("["));
             hasBracket = true;
             l.getAddr().accept(this);
-            if (l.getOffset() < 0) {
-                add("+".concat(String.valueOf(-l.getOffset())));
+            if (l.getAddr() == NASMRegSet.RBP) {
+                if (l.getOffset() < 0) {
+                    add("+".concat(String.valueOf(-l.getOffset())));
+                } else if (l.getOffset() > 0) {
+                    add("-".concat(String.valueOf(l.getOffset())));
+                }
             }
-            else if (l.getOffset() > 0) {
-                add("-".concat(String.valueOf(l.getOffset())));
+            else {
+                if (l.getOffset() < 0) {
+                    add("-".concat(String.valueOf(-l.getOffset())));
+                } else if (l.getOffset() > 0) {
+                    add("+".concat(String.valueOf(l.getOffset())));
+                }
             }
             hasBracket = false;
             add("]\n");
@@ -371,11 +379,19 @@ public class CodePrinter implements IRVisitor {
             addWithIndent("mov ".concat(size(s.getSize())).concat("["));
             hasBracket = true;
             s.getAddr().accept(this);
-            if (s.getOffset() < 0) {
-                add("+".concat(String.valueOf(-s.getOffset())));
+            if (s.getAddr() == NASMRegSet.RBP) {
+                if (s.getOffset() < 0) {
+                    add("+".concat(String.valueOf(-s.getOffset())));
+                } else if (s.getOffset() > 0) {
+                    add("-".concat(String.valueOf(s.getOffset())));
+                }
             }
-            else if (s.getOffset() > 0) {
-                add("-".concat(String.valueOf(s.getOffset())));
+            else {
+                if (s.getOffset() < 0) {
+                    add("-".concat(String.valueOf(-s.getOffset())));
+                } else if (s.getOffset() > 0) {
+                    add("+".concat(String.valueOf(s.getOffset())));
+                }
             }
             hasBracket = false;
             add("], ");

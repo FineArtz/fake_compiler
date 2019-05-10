@@ -63,7 +63,7 @@ public class TargetTransformer {
             Function f = e.getKey();
             FuncInfo fi = e.getValue();
             fi.rusedReg.addAll(f.pregs);
-            for (Function ff : f.callee) {
+            for (Function ff : f.rcallee) {
                 fi.rusedReg.addAll(ff.pregs);
             }
         }
@@ -86,8 +86,10 @@ public class TargetTransformer {
         // RBP = RSP
         inst.insertPred(new MOVE(entry, NASMRegSet.RBP, NASMRegSet.RSP));
         // RSP = RSP - offset
-        if (fi.totalReg - fi.usedCalleeSaveReg.size() > 0) {
-            inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST((fi.totalReg - fi.usedCalleeSaveReg.size()) * Type.POINTER_SIZE), NASMRegSet.RSP));
+        int offset = Math.max(fi.totalReg - fi.usedCalleeSaveReg.size(), 0);
+        offset += offset % 2;
+        if (offset > 0) {
+            inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST(offset * Type.POINTER_SIZE), NASMRegSet.RSP));
         }
     }
 
@@ -163,7 +165,7 @@ public class TargetTransformer {
                         if (NASMRegSet.paramRegs.contains(pr) && NASMRegSet.paramRegs.indexOf(pr) < f.args.size()) {
                             continue;
                         }
-                        if (calleeI.rusedReg.contains(pr)) {
+                        if (calleeI.rusedReg.contains(pr) || callee.isBuiltIn || callee.hasALLOC) {
                             ++callerSave;
                             i.insertPred(new PUSH(b, pr));
                         }
@@ -248,7 +250,7 @@ public class TargetTransformer {
                         if (NASMRegSet.paramRegs.contains(pr) && NASMRegSet.paramRegs.indexOf(pr) < f.args.size()) {
                             continue;
                         }
-                        if (calleeI.rusedReg.contains(pr)) {
+                        if (calleeI.rusedReg.contains(pr) || callee.isBuiltIn || callee.hasALLOC) {
                             i.insertSucc(new POP(b, pr));
                         }
                     }

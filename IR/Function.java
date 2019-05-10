@@ -18,6 +18,7 @@ public class Function {
     public List<StackSlot> slots = new ArrayList<>();
     public Map<VirtualReg, StackSlot> argSlots = new HashMap<>();
     public boolean isBuiltIn;
+    public boolean hasALLOC = false;
 
     // CFG info
     private List<BasicBlock> rPostOrder = null;
@@ -227,6 +228,9 @@ public class Function {
                     }
                     callee.add(e);
                     ((CALL)i).setFunc(e);
+                }
+                else if (i instanceof ALLOC) {
+                    hasALLOC = true;
                 }
             }
         }

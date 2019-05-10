@@ -31,20 +31,29 @@ public class IRRoot {
             f.rcallee.clear();
 
         Set<Function> rcs = new HashSet<>();
+        boolean a = false;
         boolean flag = true;
 
         while (flag) {
             flag = false;
             for (Function f : funcs.values()) {
                 rcs.clear();
+                a = false;
                 rcs.addAll(f.callee);
                 for (Function ff : f.callee) {
                     rcs.addAll(ff.rcallee);
+                    if (ff.hasALLOC) {
+                        a = true;
+                    }
                 }
                 if (!rcs.equals(f.rcallee)) {
                     flag = true;
                     f.rcallee.clear();
                     f.rcallee.addAll(rcs);
+                }
+                if (!f.hasALLOC && a) {
+                    flag = true;
+                    f.hasALLOC = true;
                 }
             }
         }
