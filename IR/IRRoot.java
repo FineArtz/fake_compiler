@@ -53,4 +53,18 @@ public class IRRoot {
     public void accept(IRVisitor v) {
         v.visit(this);
     }
+
+    public static class ForStruct {
+        public BasicBlock c, s, b, f;
+
+        public ForStruct(BasicBlock cc, BasicBlock ss, BasicBlock bb, BasicBlock ff) {
+            c = cc;
+            s = ss;
+            b = bb;
+            f = ff;
+        }
+    }
+    public Set<ForStruct> fors = new HashSet<>();
+
+    public boolean canUseRBX = true;
 }

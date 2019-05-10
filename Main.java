@@ -6,6 +6,7 @@ public class Main {
     public static void main(String[] args) throws Exception{
         boolean inFile = false;
         String fileName = null;
+        boolean printIR = false;
         boolean nasmFile = false;
         String nasmName = null;
 
@@ -21,6 +22,9 @@ public class Main {
                     nasmFile = true;
                     nasmName = "src/out.asm";
                     break;
+                case "--print-ir":
+                    printIR = true;
+                    break;
             }
         }
 
@@ -31,6 +35,7 @@ public class Main {
         else {
             is = System.in;
         }
+
         OutputStream os;
         if (nasmFile) {
             os = new FileOutputStream(nasmName);
@@ -47,12 +52,14 @@ public class Main {
         compiler.buildIR();
         compiler.preTransform();
         compiler.eliminate(0);
-        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        //compiler.printIR(baos);
-        //System.out.println(baos);
+        if (printIR) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            compiler.printIR(baos);
+            System.out.println(baos);
+        }
         //ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         //compiler.testIR(bais, false);
-        compiler.allocate();
+        compiler.allocate(1);
         compiler.transform();
         compiler.eliminate(1);
         compiler.generate(os);

@@ -294,10 +294,10 @@ public class CodePrinter implements IRVisitor {
             hasBracket = true;
             l.getAddr().accept(this);
             if (l.getOffset() < 0) {
-                add(String.valueOf(l.getOffset()));
+                add("+".concat(String.valueOf(-l.getOffset())));
             }
             else if (l.getOffset() > 0) {
-                add("+".concat(String.valueOf(l.getOffset())));
+                add("-".concat(String.valueOf(l.getOffset())));
             }
             hasBracket = false;
             add("]\n");
@@ -372,10 +372,10 @@ public class CodePrinter implements IRVisitor {
             hasBracket = true;
             s.getAddr().accept(this);
             if (s.getOffset() < 0) {
-                add(String.valueOf(s.getOffset()));
+                add("+".concat(String.valueOf(-s.getOffset())));
             }
             else if (s.getOffset() > 0) {
-                add("+".concat(String.valueOf(s.getOffset())));
+                add("-".concat(String.valueOf(s.getOffset())));
             }
             hasBracket = false;
             add("], ");
@@ -434,6 +434,7 @@ public class CodePrinter implements IRVisitor {
 
     @Override
     public void visit(RETURN r) {
+        addLine("leave");
         addLine("ret");
     }
 

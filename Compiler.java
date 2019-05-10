@@ -76,11 +76,17 @@ class Compiler {
         }
     }
 
-    void allocate() {
-        NaiveAllocator na = new NaiveAllocator(ir);
-        na.run();
-        ir.pr1 = NASMRegSet.R10;
-        ir.pr2 = NASMRegSet.R11;
+    void allocate(int x) {
+        if (x == 0) {
+            NaiveAllocator na = new NaiveAllocator(ir);
+            na.run();
+            ir.pr1 = NASMRegSet.R10;
+            ir.pr2 = NASMRegSet.R11;
+        }
+        else {
+            GraphAllocator ga = new GraphAllocator(ir);
+            ga.run();
+        }
     }
 
     void transform() {

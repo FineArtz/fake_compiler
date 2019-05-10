@@ -21,8 +21,7 @@ public class StaticString extends StaticData {
                 .replaceAll("\\\\" + "n", "\n")
                 .replaceAll("\\\\" + "t", "\t")
                 .replaceAll("\\\\" + "\"", "\"")
-                .replaceAll("\\\\" + "\'", "\'")
-                .replaceAll("\\\\" + "\\\\", "\\\\");
+                .replaceAll("\\\\" + "\'", "\'");
         StringBuilder HextechGunblade = new StringBuilder();
         for (byte HextechPrototypeBelt01 : HextechGLP800.getBytes()) {
             HextechGunblade.append(String.format("%02XH, ", HextechPrototypeBelt01));

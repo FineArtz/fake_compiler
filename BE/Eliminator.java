@@ -37,11 +37,56 @@ public class Eliminator {
         }
     }
 
+    private Set<IRRoot.ForStruct> visited = new HashSet<>();
+    private void forEliminate() {
+        for (IRRoot.ForStruct fs : root.fors) {
+            if (visited.contains(fs)) {
+                continue;
+            }
+            if (fs.c == null || fs.b == null || fs.f == null || fs.s == null) {
+                continue;
+            }
+            boolean elem = true;
+            List<BasicBlock> forb = new ArrayList<>(Arrays.asList(fs.c, fs.s, fs.b, fs.f));
+            Inst af = fs.f.getHead();
+            for (int j = 0; j < 3; ++j) {
+                for (Inst i = forb.get(j).getHead(); i != null; i = i.getSucc()) {
+                    if (i instanceof CALL || i instanceof RETURN || i instanceof PUSH || i instanceof STORE) {
+                        elem = false;
+                    }
+                    else if (i.getDefinedReg() != null) {
+                        if (af.liveIn.contains(i.getDefinedReg())) {
+                            elem = false;
+                        }
+                    }
+                    else if (i instanceof JUMP) {
+                        if (!forb.contains(((JUMP)i).getTarget())) {
+                            elem = false;
+                        }
+                    }
+                    else if (i instanceof CJUMP) {
+                        if (!(forb.contains(((CJUMP)i).getThenBB()) && forb.contains(((CJUMP)i).getElseBB()))) {
+                            elem = false;
+                        }
+                    }
+                }
+            }
+            if (elem) {
+                fs.c.rmvJumpInst();
+                fs.c.setHead(null);
+                fs.c.setTail(null);
+                fs.c.clearSucc();
+                fs.c.addJumpInst(new JUMP(fs.c, fs.f));
+                visited.add(fs);
+            }
+        }
+    }
+
     // If a loop is meaningless,
     // change the first BasicBlock of the loop
     // to BasicBlock(JUMP(thisBB, loop_finalBB)).
     // Then it will be eliminated by BBEliminate.
-    private void loopEliminate(Function f) {
+    private void whileEliminate(Function f) {
         if (f.isBuiltIn) {
             return;
         }
@@ -53,7 +98,7 @@ public class Eliminator {
         Set<BasicBlock> visited = new HashSet<>();
         for (BasicBlock b : blocks) {
             visited.add(b);
-            if (!(b.getName().startsWith("for") || b.getName().startsWith("while"))) {
+            if (!b.getName().startsWith("while")) {
                 continue;
             }
             if (b.getTail() instanceof CJUMP) {
@@ -66,7 +111,7 @@ public class Eliminator {
                 else if (visited.contains(cj.getElseBB())) {
                     st = blocks.indexOf(cj.getElseBB());
                 }
-                if (st != 0 && (blocks.get(st).getName().startsWith("for") || blocks.get(st).getName().startsWith("while"))) {
+                if (st != 0 && blocks.get(st).getName().startsWith("while")) {
                     ed = blocks.indexOf(b);
                     if (ed - st <= 1) {
                         stIndex.add(st);
@@ -80,7 +125,10 @@ public class Eliminator {
         for (int i = 0; i < stIndex.size(); ++i) {
             Integer st = stIndex.get(i);
             Integer ed = edIndex.get(i);
-            Integer fn = (blocks.get(ed).getName().startsWith("for") ? st - 2 : st - 1);
+            Integer fn = st - 1;
+            if (!blocks.get(fn).getName().endsWith("final")) {
+                ++fn;
+            }
             out = blocks.get(fn).getHead().liveIn;
             boolean elm = true;
             for (Integer j = st; j <= ed; ++j) {
@@ -221,7 +269,8 @@ public class Eliminator {
                     continue;
                 }
                 eliminate(f);
-                loopEliminate(f);
+                forEliminate();
+                whileEliminate(f);
                 BBEliminate(f);
                 if (changed) {
                     f.clearOrder();

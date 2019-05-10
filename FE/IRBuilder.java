@@ -257,6 +257,7 @@ public class IRBuilder implements ASTVisitor {
         BasicBlock condBB = (fs.cond == null ? bodyBB : new BasicBlock(nowFunc, "for_cond"));
         BasicBlock stepBB = (fs.step == null ? condBB : new BasicBlock(nowFunc, "for_step"));
         BasicBlock finalBB = new BasicBlock(nowFunc, "for_final");
+        root.fors.add(new IRRoot.ForStruct(condBB, stepBB, bodyBB, finalBB));
         BasicBlock tmpLoopStepBB = nowLoopStepBB;
         BasicBlock tmpLoopFinalBB = nowLoopFinalBB;
         nowLoopStepBB = stepBB;
@@ -1027,6 +1028,7 @@ public class IRBuilder implements ASTVisitor {
                     }
                 }
                 bop = BINOP.OP.DIV;
+                root.canUseRBX = false;
                 break;
             case MOD:
                 if (consts) {
@@ -1038,6 +1040,7 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 bop = BINOP.OP.MOD;
+                root.canUseRBX = false;
                 break;
             case ADD:
                 if (consts) {
@@ -1082,6 +1085,7 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 bop = BINOP.OP.SLA;
+                root.canUseRBX = false;
                 break;
             case SRA:
                 if (consts) {
@@ -1093,6 +1097,7 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 bop = BINOP.OP.SRA;
+                root.canUseRBX = false;
                 break;
             case LES:
                 if (consts) {
