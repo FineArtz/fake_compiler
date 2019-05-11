@@ -9,9 +9,7 @@ public class StackSlot extends CommonReg {
     public StackSlot(Function f, String n, boolean a) {
         func = f;
         name = n;
-        if (!a) {
-            f.slots.add(this);
-        }
+        f.slots.add(this);
     }
 
     public StackSlot(Function f, String n) {

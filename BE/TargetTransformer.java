@@ -21,6 +21,7 @@ public class TargetTransformer {
         Set<PhysicalReg> rusedReg = new HashSet<>();
         Map<StackSlot, Integer> slotOffset = new HashMap<>();
         int totalReg = 0;
+        int slots = 0;
         int exargs = 0;
     }
 
@@ -38,15 +39,18 @@ public class TargetTransformer {
         }
         fi.usedCalleeSaveReg.add(NASMRegSet.RBP);
         //fi.usedCalleeSaveReg.add(NASMRegSet.RBX);
-        for (int i = 0; i < f.slots.size(); ++i) {
+        fi.slots = f.slots.size();
+        for (int i = 0; i < fi.slots; ++i) {
             fi.slotOffset.put(f.slots.get(i), i * Type.POINTER_SIZE);
         }
-        fi.totalReg = fi.usedCalleeSaveReg.size() + f.slots.size();
-        fi.totalReg = fi.totalReg - fi.totalReg % 2 + 1;
+        fi.totalReg = fi.usedCalleeSaveReg.size() + fi.slots;
+        if (fi.totalReg % 2 == 0) {
+            ++fi.slots;
+        }
         fi.exargs = Math.max(f.args.size() - 6, 0);
         int offset = (fi.totalReg + 1) * Type.POINTER_SIZE;
         for (int i = 6; i < f.args.size(); ++i) {
-            fi.slotOffset.put(f.args.get(i).slot, offset);
+            fi.slotOffset.put(f.argSlots.get(f.args.get(i)), -offset + fi.slots * Type.POINTER_SIZE);
             offset += Type.POINTER_SIZE;
         }
         funcInfo.put(f, fi);
@@ -75,22 +79,19 @@ public class TargetTransformer {
         Inst inst = entry.getHead();
 
         // push callee-save registers
-        /*if (!f.getName().equals("main")) {
+        inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
+        if (!f.getName().equals("main")) {
             for (PhysicalReg pr : fi.usedCalleeSaveReg) {
-                inst.insertPred(new PUSH(entry, pr));
+                if (!pr.equals(NASMRegSet.RBP)) {
+                    inst.insertPred(new PUSH(entry, pr));
+                }
             }
         }
-        else {
-            inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
-        }*/
-        inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
         // RBP = RSP
         inst.insertPred(new MOVE(entry, NASMRegSet.RBP, NASMRegSet.RSP));
         // RSP = RSP - offset
-        int offset = Math.max(fi.totalReg - fi.usedCalleeSaveReg.size(), 0);
-        offset += offset % 2;
-        if (offset > 0) {
-            inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST(offset * Type.POINTER_SIZE), NASMRegSet.RSP));
+        if (fi.slots > 0) {
+            inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST(fi.slots * Type.POINTER_SIZE), NASMRegSet.RSP));
         }
     }
 
@@ -105,16 +106,16 @@ public class TargetTransformer {
     private void transformSlot(FuncInfo fi, Inst i) {
         if (i instanceof LOAD) {
             Reg reg = ((LOAD)i).getAddr();
-            if (reg instanceof StackSlot || reg instanceof VirtualReg && ((VirtualReg)reg).slot != null) {
+            if (reg instanceof StackSlot) {
                 ((LOAD)i).setAddr(NASMRegSet.RBP);
-                ((LOAD)i).setOffset(fi.slotOffset.get((reg instanceof StackSlot ? (StackSlot)reg : ((VirtualReg)reg).slot)));
+                ((LOAD)i).setOffset(fi.slotOffset.get((StackSlot)reg));
             }
         }
         else if (i instanceof STORE) {
             Reg reg = ((STORE)i).getAddr();
-            if (reg instanceof StackSlot || reg instanceof VirtualReg && ((VirtualReg)reg).slot != null) {
+            if (reg instanceof StackSlot) {
                 ((STORE)i).setAddr(NASMRegSet.RBP);
-                ((STORE)i).setOffset(fi.slotOffset.get((reg instanceof StackSlot ? (StackSlot)reg : ((VirtualReg)reg).slot)));
+                ((STORE)i).setOffset(fi.slotOffset.get((StackSlot)reg));
             }
         }
     }
@@ -180,13 +181,13 @@ public class TargetTransformer {
                     callerSave += argc;
 
                     // align rsp
-                    if ((callerSave + fi.exargs) % 2 == 1) {
+                    if ((callerSave + calleeI.exargs) % 2 == 1) {
                         i.insertPred(new PUSH(b, new CONST(0)));
                     }
 
                     // push extra arguments
-                    for (int j = f.args.size() - 1; j > 5; --j) {
-                        Reg arg = ((CALL) i).getArgs().get(j);
+                    for (int j = ((CALL)i).getArgs().size() - 1; j > 5; --j) {
+                        Reg arg = ((CALL)i).getArgs().get(j);
                         if (arg instanceof StackSlot || arg instanceof VirtualReg && ((VirtualReg) arg).slot != null) {
                             i.insertPred(new LOAD(b, NASMRegSet.RAX, Type.POINTER_SIZE, NASMRegSet.RBP, fi.slotOffset.get((arg instanceof StackSlot ? (StackSlot)arg : ((VirtualReg)arg).slot))));
                             i.insertPred(new PUSH(b, NASMRegSet.RAX));
@@ -196,6 +197,7 @@ public class TargetTransformer {
                     }
 
                     // deal with the first 6 arguments
+                    // avoid cross-assignment between argument registers
                     Map<PhysicalReg, Integer> pregOffset = new HashMap<>();
                     List<Integer> argsOffset = new ArrayList<>();
                     int offset = 0;
@@ -261,8 +263,8 @@ public class TargetTransformer {
                     }
 
                     // RSP = RSP + offset
-                    if (fi.exargs > 0 || (callerSave + fi.exargs) % 2 == 1) {
-                        int exargs = fi.exargs + (callerSave + fi.exargs) % 2;
+                    if (calleeI.exargs > 0 || (callerSave + calleeI.exargs) % 2 == 1) {
+                        int exargs = calleeI.exargs + (callerSave + calleeI.exargs) % 2;
                         i.insertSucc(new BINOP(b, BINOP.OP.ADD, NASMRegSet.RSP, new CONST(exargs * Type.POINTER_SIZE), NASMRegSet.RSP));
                     }
                 }
@@ -293,13 +295,15 @@ public class TargetTransformer {
         }*/
 
         // pop callee-save registers
-        /*if (!f.getName().equals("main")) {
+        if (!f.getName().equals("main")) {
+            last.insertPred(new MOVE(exit, NASMRegSet.RSP, NASMRegSet.RBP));
             for (int i = fi.usedCalleeSaveReg.size() - 1; i >= 0; --i) {
                 if (fi.usedCalleeSaveReg.get(i) != NASMRegSet.RBP) {
                     last.insertPred(new POP(exit, fi.usedCalleeSaveReg.get(i)));
                 }
             }
-        }*/
+            last.insertPred(new POP(exit, NASMRegSet.RBP));
+        }
     }
 
     public void run() {
