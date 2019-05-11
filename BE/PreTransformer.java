@@ -93,8 +93,31 @@ public class PreTransformer {
     private void argsInFunction(Function f) {
         BasicBlock b = f.getHead();
         Inst i = b.getHead();
+        Map<CommonReg, CommonReg> argsToTmp = new HashMap<>();
         for (int j = 0; j < Math.min(f.args.size(), 6); ++j) {
             f.args.get(j).preg = NASMRegSet.paramRegs.get(j);
+            VirtualReg tmpvr = new VirtualReg("arg_" + j);
+            argsToTmp.put(f.args.get(j), tmpvr);
+        }
+        /*for (BasicBlock bb : f.getrPostOrder()) {
+            for (Inst ii = bb.getHead(); ii != null; ii = ii.getSucc()) {
+                Map<CommonReg, CommonReg> rename = new HashMap<>(argsToTmp);
+                List<CommonReg> used = ii.getUsedReg();
+                for (CommonReg reg : used) {
+                    if (!rename.containsKey(reg)) {
+                        rename.put(reg, reg);
+                    }
+                }
+                ii.renameUsedReg(rename);
+
+                CommonReg d = ii.getDefinedReg();
+                if (rename.containsKey(d)) {
+                    ii.setDefinedReg(rename.get(d));
+                }
+            }
+        }*/
+        for (int j = 0; j < Math.min(f.args.size(), 6); ++j) {
+            i.insertPred(new MOVE(b, argsToTmp.get(f.args.get(j)), f.args.get(j)));
         }
         for (int j = 6; j < f.args.size(); ++j) {
             VirtualReg vr = f.args.get(j);

@@ -201,11 +201,10 @@ public class TargetTransformer {
                     int offset = 0;
                     for (int j = 0; j < Math.min(((CALL) i).getArgs().size(), 6); ++j) {
                         Reg arg = ((CALL) i).getArgs().get(j);
-                        if (arg instanceof VirtualReg
-                                && ((VirtualReg) arg).preg != null
-                                && NASMRegSet.paramRegs.contains(((VirtualReg) arg).preg)
-                                && NASMRegSet.paramRegs.indexOf(((VirtualReg) arg).preg) < ((CALL) i).getArgs().size()) {
-                            PhysicalReg preg = ((VirtualReg) arg).preg;
+                        if (arg instanceof PhysicalReg
+                                && NASMRegSet.paramRegs.contains(arg)
+                                && NASMRegSet.paramRegs.indexOf(arg) < ((CALL)i).getArgs().size()) {
+                            PhysicalReg preg = (PhysicalReg)arg;
                             if (pregOffset.containsKey(preg)) {
                                 argsOffset.add(pregOffset.get(preg));
                             } else {
