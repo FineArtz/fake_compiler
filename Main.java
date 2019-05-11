@@ -6,9 +6,9 @@ public class Main {
     public static void main(String[] args) throws Exception{
         boolean inFile = false;
         String fileName = null;
-        boolean printIR = false;
-        boolean nasmFile = false;
-        String nasmName = null;
+        boolean printIR = true;
+        boolean nasmFile = true;
+        String nasmName = "src/out.asm";
 
         for (int i = 0; i < args.length; ++i) {
             switch (args[i]){
@@ -18,12 +18,12 @@ public class Main {
                         fileName = args[i + 1];
                     }
                     break;
-                case "--print-nasm":
-                    nasmFile = true;
-                    nasmName = "src/out.asm";
+                case "--no-print-nasm":
+                    nasmFile = false;
+                    nasmName = null;
                     break;
-                case "--print-ir":
-                    printIR = true;
+                case "--no-print-ir":
+                    printIR = false;
                     break;
             }
         }
@@ -37,8 +37,6 @@ public class Main {
         }
 
         OutputStream os;
-        //nasmFile = true;
-        //nasmName = "src/out.asm";
         if (nasmFile) {
             os = new FileOutputStream(nasmName);
         }

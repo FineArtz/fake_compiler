@@ -472,7 +472,9 @@ public class CodePrinter implements IRVisitor {
 
     @Override
     public void visit(RETURN r) {
-        addLine("leave");
+        //if (r.getBB().getParent().getName().equals("main")) {
+            addLine("leave");
+        //}
         addLine("ret");
     }
 
