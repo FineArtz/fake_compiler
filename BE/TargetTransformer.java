@@ -75,15 +75,15 @@ public class TargetTransformer {
         Inst inst = entry.getHead();
 
         // push callee-save registers
-        if (!f.getName().equals("main")) {
+        /*if (!f.getName().equals("main")) {
             for (PhysicalReg pr : fi.usedCalleeSaveReg) {
                 inst.insertPred(new PUSH(entry, pr));
             }
         }
         else {
             inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
-        }
-        //inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
+        }*/
+        inst.insertPred(new PUSH(entry, NASMRegSet.RBP));
         // RBP = RSP
         inst.insertPred(new MOVE(entry, NASMRegSet.RBP, NASMRegSet.RSP));
         // RSP = RSP - offset
@@ -294,14 +294,13 @@ public class TargetTransformer {
         }*/
 
         // pop callee-save registers
-        if (!f.getName().equals("main")) {
-            //last.insertPred(new MOVE(exit, NASMRegSet.RSP, NASMRegSet.RBP));
+        /*if (!f.getName().equals("main")) {
             for (int i = fi.usedCalleeSaveReg.size() - 1; i >= 0; --i) {
                 if (fi.usedCalleeSaveReg.get(i) != NASMRegSet.RBP) {
                     last.insertPred(new POP(exit, fi.usedCalleeSaveReg.get(i)));
                 }
             }
-        }
+        }*/
     }
 
     public void run() {
