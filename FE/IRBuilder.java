@@ -793,7 +793,7 @@ public class IRBuilder implements ASTVisitor {
                 VirtualReg reg = new VirtualReg("ord");
                 fce.args.get(0).accept(this);
                 BINOP binop = new BINOP(nowBB, BINOP.OP.ADD, thisExp.value, fce.args.get(0).value, reg);
-                LOAD load = new LOAD(nowBB, reg, 1, reg, 4);
+                LOAD load = new LOAD(nowBB, reg, 1, reg, Type.POINTER_SIZE);
                 nowBB.addInst(binop);
                 nowBB.addInst(load);
                 fce.value = reg;

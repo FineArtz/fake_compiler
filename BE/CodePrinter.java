@@ -278,19 +278,30 @@ public class CodePrinter implements IRVisitor {
 
     @Override
     public void visit(LOAD l) {
+        String sz = size(l.getSize());
         if (l.getAddr() instanceof StaticString) {
-            addWithIndent("mov ");
+            if (sz.equals("qword")) {
+                addWithIndent("mov ");
+            }
+            else {
+                addWithIndent("movsx ");
+            }
             l.getDest().accept(this);
             add(", ".concat(size(l.getSize())).concat(" "));
             l.getAddr().accept(this);
             addLine("");
         }
         else {
-            addWithIndent("mov ");
+            if (sz.equals("qword")) {
+                addWithIndent("mov ");
+            }
+            else {
+                addWithIndent("movsx ");
+            }
             isDest = true;
             l.getDest().accept(this);
             isDest = false;
-            add(", ".concat(size(l.getSize())).concat("["));
+            add(", ".concat(size(l.getSize())).concat(" ["));
             hasBracket = true;
             l.getAddr().accept(this);
             if (l.getAddr() == NASMRegSet.RBP) {
@@ -368,15 +379,26 @@ public class CodePrinter implements IRVisitor {
 
     @Override
     public void visit(STORE s) {
+        String sz = size(s.getSize());
         if (s.getAddr() instanceof StaticString) {
-            addWithIndent("mov ".concat(size(s.getSize())).concat(" "));
+            if (sz.equals("qword")) {
+                addWithIndent("mov qword ");
+            }
+            else {
+                addWithIndent("movsx ".concat(sz).concat(" "));
+            }
             s.getAddr().accept(this);
             add(" ");
             s.getValue().accept(this);
             addLine("");
         }
         else {
-            addWithIndent("mov ".concat(size(s.getSize())).concat("["));
+            if (sz.equals("qword")) {
+                addWithIndent("mov qword [");
+            }
+            else {
+                addWithIndent("movsx ".concat(sz).concat(" ["));
+            }
             hasBracket = true;
             s.getAddr().accept(this);
             if (s.getAddr() == NASMRegSet.RBP) {
