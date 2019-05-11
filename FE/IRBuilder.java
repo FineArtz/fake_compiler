@@ -990,7 +990,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     Integer tmp = li;
                     li = ri;
                     ri = tmp;
@@ -1051,7 +1053,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     Integer tmp = li;
                     li = ri;
                     ri = tmp;
@@ -1108,7 +1112,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     cop = CMP.OP.GRT;
                 }
                 else {
@@ -1121,7 +1127,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     cop = CMP.OP.LES;
                 }
                 else {
@@ -1134,7 +1142,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     cop = CMP.OP.GTE;
                 }
                 else {
@@ -1147,7 +1157,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     cop = CMP.OP.LTE;
                 }
                 else {
@@ -1160,7 +1172,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                 }
                 cop = CMP.OP.EQL;
                 break;
@@ -1170,7 +1184,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                 }
                 cop = CMP.OP.NEQ;
                 break;
@@ -1180,7 +1196,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     Integer tmp = li;
                     li = ri;
                     ri = tmp;
@@ -1193,7 +1211,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     Integer tmp = li;
                     li = ri;
                     ri = tmp;
@@ -1206,7 +1226,9 @@ public class IRBuilder implements ASTVisitor {
                     return;
                 }
                 if (li != null) {
-                    swap(be.lhs.value, be.rhs.value);
+                    Expr te = be.lhs;
+                    be.lhs = be.rhs;
+                    be.rhs = te;
                     Integer tmp = li;
                     li = ri;
                     ri = tmp;
