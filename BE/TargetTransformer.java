@@ -91,8 +91,10 @@ public class TargetTransformer {
         // RBP = RSP
         inst.insertPred(new MOVE(entry, NASMRegSet.RBP, NASMRegSet.RSP));
         // RSP = RSP - offset
-        if (fi.slots > 0) {
-            inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST(fi.slots * Type.POINTER_SIZE), NASMRegSet.RSP));
+        if (!f.getName().equals("main")) {
+            if (fi.slots > 0) {
+                inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST(fi.slots * Type.POINTER_SIZE), NASMRegSet.RSP));
+            }
         }
     }
 

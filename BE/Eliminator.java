@@ -217,29 +217,34 @@ public class Eliminator {
             Inst pred = null;
             for (Inst i = b.getHead(); i != null; i = i.getSucc()) {
                 boolean flag = false;
+                boolean flag2 = false;
                 if (i instanceof LOAD && pred instanceof LOAD) {
                     if (((LOAD)i).isSame((LOAD)pred)) {
-                        flag = true;
+                        flag2 = true;
                     }
                 }
                 else if (i instanceof STORE && pred instanceof STORE) {
                     if (((STORE)i).isSame((STORE)pred)) {
-                        flag = true;
+                        flag2 = true;
                     }
                 }
                 else if (i instanceof MOVE) {
                     if (((MOVE)i).getDest() == ((MOVE)i).getSrc()) {
-                        flag = true;
+                        flag2 = true;
                     }
                     else if (pred instanceof MOVE && ((MOVE)i).getDest() == ((MOVE)pred).getDest()) {
                         flag = true;
                     }
                     else if (pred instanceof MOVE && ((MOVE)i).getDest() == ((MOVE)pred).getSrc() && ((MOVE)i).getSrc() == ((MOVE)pred).getDest()) {
-                        flag = true;
+                        flag2 = true;
                     }
                 }
                 if (flag) {
                     pred.remove();
+                    pred = i;
+                }
+                else if (flag2) {
+                    i.remove();
                 }
                 else {
                     pred = i;
