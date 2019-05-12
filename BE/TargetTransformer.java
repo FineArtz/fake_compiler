@@ -58,6 +58,7 @@ public class TargetTransformer {
 
     private void putBuiltinFuncs() {
         for (Function f : root.builtinFuncs.values()) {
+            f.pregs.addAll(NASMRegSet.callerSaveRegs);
             funcInfo.put(f, new FuncInfo());
         }
     }

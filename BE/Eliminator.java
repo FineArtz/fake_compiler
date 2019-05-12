@@ -239,7 +239,7 @@ public class Eliminator {
                     }
                 }
                 if (flag) {
-                    i.remove();
+                    pred.remove();
                 }
                 else {
                     pred = i;
