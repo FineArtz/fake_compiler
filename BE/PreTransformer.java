@@ -51,14 +51,14 @@ public class PreTransformer {
                         rename.put(r, r);
                     }
                     for (CommonReg r : used) {
-                        if (r instanceof StaticData) {
+                        if (r instanceof StaticData && !(r instanceof StaticString)) {
                             rename.put(r, getVirtualReg((StaticData)r, fi.staticReg));
                         }
                     }
                     i.renameUsedReg(rename);
                 }
                 CommonReg d = i.getDefinedReg();
-                if (d instanceof StaticData) {
+                if (d != null && d instanceof StaticData) {
                     VirtualReg vr = getVirtualReg((StaticData)d, fi.staticReg);
                     i.setDefinedReg(vr);
                     fi.writtenStatic.add((StaticData)d);
@@ -192,7 +192,7 @@ public class PreTransformer {
 
                         // static data should be stored before function call
                         for (StaticData sd : fi.writtenStatic) {
-                            if (cei.ruseStatic.contains(sd)) {
+                            if (!(sd instanceof StaticString) && cei.ruseStatic.contains(sd)) {
                                 call.insertPred(new STORE(b, fi.staticReg.get(sd), Type.POINTER_SIZE, sd));
                             }
                         }

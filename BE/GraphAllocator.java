@@ -153,6 +153,7 @@ public class GraphAllocator {
         while (!vrStack.empty()) {
             VirtualReg vr = vrStack.pop();
             VirtualRegInfo vri = getVRInfo(vr);
+            vri.isDeleted = false;
             colourUsed.clear();
             for (VirtualReg n : vri.neighbour) {
                 VirtualRegInfo ni = getVRInfo(n);
@@ -189,9 +190,11 @@ public class GraphAllocator {
                 }
             }
             else {
+                if (colourUsed.contains(preg)) {
+                    throw new SomeError("In colourize: unexpected error");
+                }
                 vri.colour = preg;
             }
-            vri.isDeleted = false;
         }
     }
 
@@ -216,11 +219,11 @@ public class GraphAllocator {
                     }
                     for (CommonReg reg : used) {
                         if (reg instanceof VirtualReg) {
-                            CommonReg c = vrInfo.get((VirtualReg) reg).colour;
+                            CommonReg c = vrInfo.get((VirtualReg)reg).colour;
                             // can be directly used
                             if (c instanceof PhysicalReg) {
                                 rename.put(reg, c);
-                                f.pregs.add((PhysicalReg) c);
+                                f.pregs.add((PhysicalReg)c);
                             }
                             // load before use
                             else {
@@ -234,7 +237,7 @@ public class GraphAllocator {
                                     pr = tmp1;
                                     tmp1Used = true;
                                 }
-                                i.insertSucc(new LOAD(b, pr, Type.POINTER_SIZE, c, 0));
+                                i.insertPred(new LOAD(b, pr, Type.POINTER_SIZE, c, 0));
                                 rename.put(reg, pr);
                                 f.pregs.add(pr);
                             }
@@ -270,8 +273,8 @@ public class GraphAllocator {
             nodeSet.clear();
             smallNode.clear();
             buildGraph(f);
+            nodeSet.addAll(vrInfo.keySet());
             for (VirtualReg vr : vrInfo.keySet()) {
-                nodeSet.add(vr);
                 if (getVRInfo(vr).neighbour.size() < maxColour) {
                     smallNode.add(vr);
                 }

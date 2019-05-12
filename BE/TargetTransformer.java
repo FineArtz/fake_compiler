@@ -91,11 +91,11 @@ public class TargetTransformer {
         // RBP = RSP
         inst.insertPred(new MOVE(entry, NASMRegSet.RBP, NASMRegSet.RSP));
         // RSP = RSP - offset
-        if (!f.getName().equals("main")) {
+        //if (!f.getName().equals("main")) {
             if (fi.slots > 0) {
-                inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST(fi.slots * Type.POINTER_SIZE), NASMRegSet.RSP));
+                inst.insertPred(new BINOP(entry, BINOP.OP.SUB, NASMRegSet.RSP, new CONST((fi.slots + 1) / 2 * Type.POINTER_SIZE * 2), NASMRegSet.RSP));
             }
-        }
+        //}
     }
 
     private void rmvSelfMove(Inst i) {

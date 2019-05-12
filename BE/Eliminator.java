@@ -10,6 +10,7 @@ public class Eliminator {
     private IRRoot root;
     private LivenessAnalysis la;
     private boolean changed;
+    private boolean eliminated;
     private Map<BasicBlock, BasicBlock> jumpTarget = new HashMap<>();
 
     public Eliminator(IRRoot r) {
@@ -30,7 +31,7 @@ public class Eliminator {
                     CommonReg d = i.getDefinedReg();
                     if (!i.liveOut.contains(d)) {
                         i.remove();
-                        changed = true;
+                        eliminated = true;
                     }
                 }
             }
@@ -183,7 +184,7 @@ public class Eliminator {
             if (b.getTail() instanceof JUMP) {
                 JUMP j = (JUMP)b.getTail();
                 if (j.getTarget() != getFinalTarget(j.getTarget())) {
-                    changed = true;
+                    //changed = true;
                     b.getSucc().remove(j.getTarget());
                     j.setTarget(getFinalTarget(j.getTarget()));
                     b.getSucc().add(j.getTarget());
@@ -192,21 +193,21 @@ public class Eliminator {
             else if (b.getTail() instanceof CJUMP) {
                 CJUMP cj = (CJUMP)b.getTail();
                 if (cj.getThenBB() != getFinalTarget(cj.getThenBB())) {
-                    changed = true;
+                    //changed = true;
                     b.getSucc().remove(cj.getThenBB());
                     cj.setThenBB(getFinalTarget(cj.getThenBB()));
                     b.getSucc().add(cj.getThenBB());
                 }
                 if (cj.getElseBB() != getFinalTarget(cj.getElseBB())) {
-                    changed = true;
+                    //changed = true;
                     b.getSucc().remove(cj.getElseBB());
                     cj.setElseBB(getFinalTarget(cj.getElseBB()));
                     b.getSucc().add(cj.getElseBB());
                 }
                 if (cj.getThenBB() == cj.getElseBB()) {
+                    //changed = true;
                     b.rmvJumpInst();
                     b.addJumpInst(new JUMP(b, cj.getThenBB()));
-                    changed = true;
                 }
             }
         }
@@ -266,9 +267,9 @@ public class Eliminator {
         for (Function f : root.funcs.values()) {
             la.analyseFunction(f);
         }
-        changed = true;
-        while (changed) {
-            changed = false;
+        eliminated = true;
+        while (eliminated) {
+            eliminated = false;
             for (Function f : root.funcs.values()) {
                 if (f.isBuiltIn || f.getName().equals("__init__")) {
                     continue;
@@ -277,7 +278,7 @@ public class Eliminator {
                 forEliminate();
                 //whileEliminate(f);
                 BBEliminate(f);
-                if (changed) {
+                if (eliminated) {
                     f.clearOrder();
                 }
                 la.analyseFunction(f);

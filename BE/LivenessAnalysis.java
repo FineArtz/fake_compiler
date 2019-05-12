@@ -2,6 +2,7 @@
 
 package BE;
 
+import Err.SomeError;
 import IR.*;
 
 import java.util.HashSet;
@@ -48,6 +49,9 @@ class LivenessAnalysis {
                         out.addAll(((JUMP)i).getTarget().getHead().liveIn);
                     }
                     else if (i instanceof CJUMP) {
+                        if (((CJUMP)i).getThenBB().getHead().liveIn == null || ((CJUMP)i).getElseBB().getHead().liveIn == null) {
+                            throw new SomeError("In livenessAnalysis: unexpected error");
+                        }
                         out.addAll(((CJUMP)i).getThenBB().getHead().liveIn);
                         out.addAll(((CJUMP)i).getElseBB().getHead().liveIn);
                     }

@@ -395,7 +395,7 @@ public class IRBuilder implements ASTVisitor {
         nowBB.addInst(new CALL(nowBB, f, args, (fce.rtype.type instanceof VOID || fce.rtype.type instanceof NULL) ? null : reg));
         fce.value = reg;
         if (fce.trueBB != null) {
-            nowBB.addInst(new CJUMP(nowBB, fce.value, fce.trueBB, fce.falseBB));
+            nowBB.addJumpInst(new CJUMP(nowBB, fce.value, fce.trueBB, fce.falseBB));
         }
     }
 
@@ -960,7 +960,7 @@ public class IRBuilder implements ASTVisitor {
         nowBB.addInst(call);
 
         if (be.trueBB != null) {
-            nowBB.addInst(new CJUMP(nowBB, reg, be.trueBB, be.falseBB));
+            nowBB.addJumpInst(new CJUMP(nowBB, reg, be.trueBB, be.falseBB));
         }
         else {
             be.value = reg;
