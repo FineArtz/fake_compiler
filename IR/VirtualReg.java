@@ -7,6 +7,7 @@ public class VirtualReg extends CommonReg {
     public PhysicalReg preg = null;
     public StackSlot slot = null;
     public int stackPos = 0;
+    public boolean isGlobal = false;
 
     public VirtualReg(String n) {
         name = n;

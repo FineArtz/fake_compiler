@@ -58,7 +58,7 @@ public class PreTransformer {
                     i.renameUsedReg(rename);
                 }
                 CommonReg d = i.getDefinedReg();
-                if (d != null && d instanceof StaticData) {
+                if (d instanceof StaticData) {
                     VirtualReg vr = getVirtualReg((StaticData)d, fi.staticReg);
                     i.setDefinedReg(vr);
                     fi.writtenStatic.add((StaticData)d);
@@ -70,6 +70,7 @@ public class PreTransformer {
         BasicBlock b = f.getHead();
         Inst i = b.getHead();
         for (Map.Entry<StaticData, VirtualReg> e : fi.staticReg.entrySet()) {
+            e.getValue().isGlobal = true;
             i.insertPred(new LOAD(b, e.getValue(), Type.POINTER_SIZE, e.getKey(), e.getKey() instanceof StaticString));
         }
     }

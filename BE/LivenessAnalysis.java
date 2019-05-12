@@ -15,16 +15,12 @@ class LivenessAnalysis {
 
     private void initBlock(BasicBlock b) {
         for (Inst i = b.getHead(); i != null; i = i.getSucc()) {
-            if (i.liveIn == null) {
+            if (i.liveIn == null || i.liveOut == null) {
                 i.liveIn = new HashSet<>();
-            }
-            else {
-                i.liveIn.clear();
-            }
-            if (i.liveOut == null) {
                 i.liveOut = new HashSet<>();
             }
             else {
+                i.liveIn.clear();
                 i.liveOut.clear();
             }
         }

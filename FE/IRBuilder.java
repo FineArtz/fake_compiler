@@ -832,7 +832,7 @@ public class IRBuilder implements ASTVisitor {
         // get value
         needAddr = false;
         expr.accept(this);
-        needMem = tmpNeedAddr;
+        needAddr = tmpNeedAddr;
 
         BINOP.OP op = (isInc ? BINOP.OP.ADD : BINOP.OP.SUB);
         CONST one = new CONST(1);

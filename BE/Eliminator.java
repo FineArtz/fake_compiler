@@ -21,7 +21,9 @@ public class Eliminator {
     private void eliminate(Function f) {
         List<BasicBlock> blocks = f.getrPrevOrder();
         for (BasicBlock b : blocks) {
-            for (Inst i = b.getTail(); i != null; i = i.getPred()) {
+            Inst pred = null;
+            for (Inst i = b.getTail(); i != null; i = pred) {
+                pred = i.getPred();
                 if (i instanceof ALLOC
                 || i instanceof BINOP
                 || i instanceof CMP
@@ -30,8 +32,10 @@ public class Eliminator {
                 || i instanceof UNOP) {
                     CommonReg d = i.getDefinedReg();
                     if (!i.liveOut.contains(d)) {
-                        i.remove();
-                        eliminated = true;
+                        if (d == null || !((VirtualReg)d).isGlobal) {
+                            i.remove();
+                            eliminated = true;
+                        }
                     }
                 }
             }
