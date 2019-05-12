@@ -393,12 +393,13 @@ public class CodePrinter implements IRVisitor {
             addLine("");
         }
         else {
-            if (sz.equals("qword")) {
+            /*if (sz.equals("qword")) {
                 addWithIndent("mov qword [");
             }
             else {
                 addWithIndent("movsx ".concat(sz).concat(" ["));
-            }
+            }*/
+            addWithIndent("mov qword [");
             hasBracket = true;
             s.getAddr().accept(this);
             if (s.getAddr() == NASMRegSet.RBP) {
