@@ -2,6 +2,8 @@
 
 package IR;
 
+import Err.SomeError;
+
 import java.util.Map;
 
 public class MOVE extends Inst {
@@ -12,6 +14,9 @@ public class MOVE extends Inst {
         super(b);
         dest = d;
         src = s;
+        if (s == null) {
+            throw new SomeError("In MOVE: source is null");
+        }
         reloadRegs();
     }
 

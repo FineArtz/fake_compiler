@@ -291,6 +291,10 @@ public class Function {
         this.tail = tail;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void accept(IRVisitor v) {
         v.visit(this);
     }

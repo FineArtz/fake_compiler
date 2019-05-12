@@ -90,6 +90,7 @@ public class IRBuilder implements ASTVisitor {
         nowFunc = root.funcs.get(funcName);
         if (nowFunc == null) {
             nowFunc = new Function(new FuncSymbol(fd));
+            nowFunc.setName(funcName);
             root.funcs.put(funcName, nowFunc);
         }
         nowBB = nowFunc.getHead();
@@ -346,6 +347,7 @@ public class IRBuilder implements ASTVisitor {
 
                 VirtualReg reg = new VirtualReg("ret_bool_val");
                 assign((new INT()).getSize(), reg, 0, rs.expr, false);
+                rs.expr.value = reg;
                 nowBB.addJumpInst(new RETURN(nowBB, rs.expr.value));
             }
             else {
@@ -370,6 +372,7 @@ public class IRBuilder implements ASTVisitor {
         // member function
         // regard "this" as an argument
         if (fs.pname != null) {
+            funcName = fs.pname + "." + funcName;
             thisExp = (fce.func instanceof MemAccessExpr ? ((MemAccessExpr) (fce.func)).expr : new ThisExpr(null));
             if (thisExp.rtype.type instanceof NULL) {
                 thisExp.rtype.type = nowClass;
@@ -391,6 +394,7 @@ public class IRBuilder implements ASTVisitor {
         if (f == null) {
             f = new Function(fs);
         }
+        f.setName(funcName);
         VirtualReg reg = new VirtualReg(null);
         nowBB.addInst(new CALL(nowBB, f, args, (fce.rtype.type instanceof VOID || fce.rtype.type instanceof NULL) ? null : reg));
         fce.value = reg;
@@ -650,10 +654,10 @@ public class IRBuilder implements ASTVisitor {
 
     private boolean isCondExpr(Expr expr) {
         if (expr instanceof UnaryExpr) {
-            return ((UnaryExpr) expr).op == 4;
+            return ((UnaryExpr)expr).op == 4;
         }
         else if (expr instanceof BinaryExpr) {
-            BinaryExpr.OP op = ((BinaryExpr) expr).op;
+            BinaryExpr.OP op = ((BinaryExpr)expr).op;
             return op == BinaryExpr.OP.LAND || op == BinaryExpr.OP.LOR;
         }
         else
@@ -962,9 +966,9 @@ public class IRBuilder implements ASTVisitor {
         if (be.trueBB != null) {
             nowBB.addJumpInst(new CJUMP(nowBB, reg, be.trueBB, be.falseBB));
         }
-        else {
+        //else {
             be.value = reg;
-        }
+        //}
     }
 
     private void swap(Reg x, Reg y) {
@@ -1246,9 +1250,9 @@ public class IRBuilder implements ASTVisitor {
             if (be.trueBB != null) {
                 nowBB.addJumpInst(new CJUMP(nowBB, reg, be.trueBB, be.falseBB));
             }
-            else {
+            //else {
                 be.value = reg;
-            }
+            //}
         }
     }
 
