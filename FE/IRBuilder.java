@@ -777,7 +777,7 @@ public class IRBuilder implements ASTVisitor {
                 VirtualReg reg = new VirtualReg("parseInt");
                 List<Reg> args = new ArrayList<>();
                 args.add(thisExp.value);
-                CALL call = new CALL(nowBB, root.builtinFuncs.get("parseInt"), args, reg);
+                CALL call = new CALL(nowBB, root.builtinFuncs.get("$String$.parseInt"), args, reg);
                 nowBB.addInst(call);
                 fce.value = reg;
                 break;
@@ -788,7 +788,7 @@ public class IRBuilder implements ASTVisitor {
 //                fce.args.get(0).accept(this);
 //                args.add(thisExp.value);;
 //                args.add(fce.args.get(0).value);
-//                CALL call = new CALL(nowBB, root.builtinFuncs.get("ord"), args, reg);
+//                CALL call = new CALL(nowBB, root.builtinFuncs.get("$String$.ord"), args, reg);
 //                nowBB.addInst(call);
 //                fce.value = reg;
 //                break;
@@ -811,7 +811,7 @@ public class IRBuilder implements ASTVisitor {
                 args.add(thisExp.value);
                 args.add(fce.args.get(0).value);
                 args.add(fce.args.get(1).value);
-                CALL call = new CALL(nowBB, root.builtinFuncs.get("subString"), args, reg);
+                CALL call = new CALL(nowBB, root.builtinFuncs.get("$String$.subString"), args, reg);
                 nowBB.addInst(call);
                 fce.value = reg;
                 break;
