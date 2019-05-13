@@ -71,7 +71,7 @@ abstract public class Scope{
         if (!find(k, p))
             return null;
         else{
-            if (symbol.containsKey(k)){
+            /*if (symbol.containsKey(k)){
                 Symbol s = symbol.get(k);
                 if (!(s instanceof VarSymbol))
                     return symbol.get(k);
@@ -79,14 +79,33 @@ abstract public class Scope{
                     if (this instanceof TopScope)
                         return null;
                     else
-                        return ((LocalScope)this).parent.get(k, p);
+                        return ((LocalScope)this).parent.get(k, p, 0);
                 }
                 else
                     return s;
             }
             else
-                return ((LocalScope)this).parent.get(k);
+                return ((LocalScope)this).parent.get(k, p, 0);*/
+            return _get(k, p);
         }
+    }
+
+    private Symbol _get(String k, Position p) {
+        if (symbol.containsKey(k)){
+            Symbol s = symbol.get(k);
+            if (!(s instanceof VarSymbol))
+                return symbol.get(k);
+            if (p.less(((VarSymbol)s).pos)){
+                if (this instanceof TopScope)
+                    return null;
+                else
+                    return ((LocalScope)this).parent._get(k, p);
+            }
+            else
+                return s;
+        }
+        else
+            return ((LocalScope)this).parent._get(k, p);
     }
 
     public void afind(String k){
