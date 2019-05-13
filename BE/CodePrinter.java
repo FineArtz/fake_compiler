@@ -213,7 +213,15 @@ public class CodePrinter implements IRVisitor {
     @Override
     public void visit(CALL c) {
         if (c.getFunc().isBuiltIn) {
-            addLine("call ".concat(c.getFunc().getName()));
+            String name = c.getFunc().getName();
+            if (c.getFunc().getName().startsWith("$")) {
+                while (name.charAt(0) != '.') {
+                    name = name.substring(1);
+                }
+                name = name.substring(1);
+            }
+            name = "__" + name;
+            addLine("call ".concat(name));
         }
         else {
             addLine("call ".concat(getID(c.getFunc().getHead())));

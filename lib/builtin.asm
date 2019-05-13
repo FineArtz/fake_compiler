@@ -1,19 +1,18 @@
-global print
-global println
-global printInt
-global printlnInt
-global getString
-global getInt
-global toString
-global str_concat
-global str_equal
-global str_not_equal
-global str_less
-global str_lte
-global parseInt
-global ord
-global substring
-global main
+global __print
+global __println
+global __printInt
+global __printlnInt
+global __getString
+global __getInt
+global __toString
+global __str_concat
+global __str_equal
+global __str_not_equal
+global __str_less
+global __str_lte
+global __parseInt
+global __ord
+global __substring
 global REG_SIZE
 
 extern strcmp
@@ -30,7 +29,7 @@ extern _GLOBAL_OFFSET_TABLE_
 
 SECTION .text   
 
-print:
+__print:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -48,7 +47,7 @@ print:
         ret
 
 
-println:
+__println:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -64,7 +63,7 @@ println:
         ret
 
 
-printInt:
+__printInt:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 80
@@ -144,7 +143,7 @@ L_007:  leave
         ret
 
 
-printlnInt:
+__printlnInt:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 80
@@ -226,7 +225,7 @@ L_014:  leave
         ret
 
 
-getString:
+__getString:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -255,7 +254,7 @@ getString:
         ret
 
 
-getInt:
+__getInt:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -318,7 +317,7 @@ L_025:  test    eax, eax
         ret
 
 
-toString:
+__toString:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 96
@@ -444,7 +443,7 @@ L_034:  leave
         ret
 
 
-str_concat:
+__str_concat:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
@@ -530,7 +529,7 @@ L_038:  mov     edx, dword [rbp-14H]
         ret
 
 
-str_equal:
+__str_equal:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -554,7 +553,7 @@ str_equal:
         ret
 
 
-str_not_equal:
+__str_not_equal:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -578,7 +577,7 @@ str_not_equal:
         ret
 
 
-str_less:
+__str_less:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -600,7 +599,7 @@ str_less:
         ret
 
 
-str_lte:
+__str_lte:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 16
@@ -624,7 +623,7 @@ str_lte:
         ret
 
 
-parseInt:
+__parseInt:
         push    rbp
         mov     rbp, rsp
         mov     qword [rbp-18H], rdi
@@ -712,7 +711,7 @@ L_051:  pop     rbp
         ret
 
 
-ord:
+__ord:
         push    rbp
         mov     rbp, rsp
         mov     qword [rbp-8H], rdi
@@ -729,7 +728,7 @@ ord:
         ret
 
 
-substring:
+__substring:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 32

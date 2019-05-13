@@ -18,6 +18,9 @@ public class IRRoot {
 
     private void initBuiltinFuncs() {
         for (Function f : Function.BUILTIN_FUNC) {
+            if (f.getFunc().pname != null) {
+                f.setName(f.getFunc().pname + "." + f.getName());
+            }
             builtinFuncs.put(f.getName(), f);
         }
     }

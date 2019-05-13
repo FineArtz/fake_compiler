@@ -966,9 +966,9 @@ public class IRBuilder implements ASTVisitor {
         if (be.trueBB != null) {
             nowBB.addJumpInst(new CJUMP(nowBB, reg, be.trueBB, be.falseBB));
         }
-        else {
+        //else {
             be.value = reg;
-        }
+        //}
     }
 
     private void swap(Reg x, Reg y) {
@@ -1250,9 +1250,9 @@ public class IRBuilder implements ASTVisitor {
             if (be.trueBB != null) {
                 nowBB.addJumpInst(new CJUMP(nowBB, reg, be.trueBB, be.falseBB));
             }
-            else {
+            //else {
                 be.value = reg;
-            }
+            //}
         }
     }
 

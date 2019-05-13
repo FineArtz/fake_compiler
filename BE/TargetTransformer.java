@@ -41,7 +41,7 @@ public class TargetTransformer {
         //fi.usedCalleeSaveReg.add(NASMRegSet.RBX);
         fi.slots = f.slots.size();
         for (int i = 0; i < fi.slots; ++i) {
-            fi.slotOffset.put(f.slots.get(i), i * Type.POINTER_SIZE);
+            fi.slotOffset.put(f.slots.get(i), (i + 1) * Type.POINTER_SIZE);
         }
         fi.totalReg = fi.usedCalleeSaveReg.size() + fi.slots;
         if (fi.totalReg % 2 == 0) {
