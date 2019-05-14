@@ -204,7 +204,7 @@ public class PreTransformer {
                         }
                         reload.clear();
                         reload.addAll(cei.rdefStatic);
-                        reload.retainAll(cei.writtenStatic);
+                        reload.retainAll(used);
                         for (StaticData sd : reload) {
                             if (!(sd instanceof StaticString)) {
                                 i.insertSucc(new LOAD(b, fi.staticReg.get(sd), Type.POINTER_SIZE, sd, false));

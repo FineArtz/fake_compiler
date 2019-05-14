@@ -330,7 +330,7 @@ __toString:
         cmp     dword [rbp-54H], 0
         jns     L_026
         neg     dword [rbp-54H]
-        mov     dword [rbp-44H], -1
+        mov     dword [rbp-44H], 1
         jmp     L_027
 
 L_026:  mov     dword [rbp-44H], 0
@@ -804,4 +804,5 @@ REG_SIZE:
 
 L_054:
         db 25H, 73H, 00H
+
 
