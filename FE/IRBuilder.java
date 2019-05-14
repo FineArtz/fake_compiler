@@ -1010,10 +1010,10 @@ public class IRBuilder implements ASTVisitor {
                         be.value = new CONST(0);
                         return;
                     }
-                    else if (ri == 2) {
+                    else if ((ri & (ri - 1)) == 0) {
                         bop = BINOP.OP.SLA;
                         be.value = reg;
-                        nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(1), reg));
+                        nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(new Double(Math.log(ri) / Math.log(2)).intValue()), reg));
                         return;
                     }
                 }
@@ -1029,10 +1029,10 @@ public class IRBuilder implements ASTVisitor {
                         be.value = be.lhs.value;
                         return;
                     }
-                    else if (ri == 2) {
+                    else if ((ri & (ri - 1)) == 0) {
                         bop = BINOP.OP.SRA;
                         be.value = reg;
-                        nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(1), reg));
+                        nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(new Double(Math.log(ri) / Math.log(2)).intValue()), reg));
                         return;
                     }
                 }
@@ -1044,9 +1044,17 @@ public class IRBuilder implements ASTVisitor {
                     be.value = new CONST(li % ri);
                     return;
                 }
-                if (ri != null && ri == 1) {
-                    be.value = new CONST(0);
-                    return;
+                if (ri != null) {
+                    if (ri == 1) {
+                        be.value = new CONST(0);
+                        return;
+                    }
+                    else if ((ri & (ri - 1)) == 0) {
+                        bop = BINOP.OP.BAND;
+                        be.value = reg;
+                        nowBB.addInst(new BINOP(nowBB, bop, be.lhs.value, new CONST(new Double(Math.log(ri) / Math.log(2)).intValue()), reg));
+                        return;
+                    }
                 }
                 bop = BINOP.OP.MOD;
                 root.canUseRBX = false;

@@ -162,45 +162,48 @@ public class CodePrinter implements IRVisitor {
                     --magic;
                     if (op == BINOP.OP.DIV) {
                         needLowbit = true;
-                        addWithIndent("mov ecx, ");
+                        addWithIndent("mov ebx, ");
                         lhs.accept(this);
                         addLine("");
-                        addLine("mov eax, ecx");
+                        addLine("mov eax, ebx");
                         addLine(String.format("mov edx, %d", (1L << magic) / ((CONST)rhs).getVal() + 1));
                         addLine("imul edx");
                         if (magic > 32) {
                             addLine(String.format("sar edx, %d", magic - 32));
                         }
-                        addLine("sar ecx, 31");
-                        addLine("sub edx, ecx");
+                        addLine("sar ebx, 31");
+                        addLine("sub edx, ebx");
                         needLowbit = false;
                         addWithIndent("mov ");
                         dest.accept(this);
                         add(", rdx\n");
+                        return;
                     }
                     else {
+                        addLine("push rax");
                         needLowbit = true;
-                        addWithIndent("mov esi, ");
+                        addWithIndent("mov ".concat(pr1.getLowbitName()).concat(", "));
                         lhs.accept(this);
                         addLine("");
-                        addLine("mov eax, esi");
-                        addLine(String.format("mov ecx, %d", (1L << magic) / ((CONST)rhs).getVal() + 1));
-                        addLine("imul ecx");
+                        addLine("mov eax, ".concat(pr1.getLowbitName()));
+                        addLine(String.format("mov ebx, %d", (1L << magic) / ((CONST)rhs).getVal() + 1));
+                        addLine("imul ebx");
                         addLine("mov eax, edx");
                         if (magic > 32) {
                             addLine(String.format("sar eax, %d", magic - 32));
                         }
-                        addLine("mov edx, esi");
+                        addLine("mov edx, ".concat(pr1.getLowbitName()));
                         addLine("sar edx, 31");
                         addLine("sub eax, edx");
                         addLine(String.format("imul eax, eax, %d", ((CONST)rhs).getVal()));
-                        addLine("sub esi, eax");
+                        addLine("sub ".concat(pr1.getLowbitName()).concat(", eax"));
                         needLowbit = false;
                         addWithIndent("mov ");
                         dest.accept(this);
-                        add(", rsi\n");
+                        add(", ".concat(pr1.getName()).concat("\n"));
+                        addLine("pop rax");
+                        return;
                     }
-                    return;
                 }
                 addWithIndent("mov rbx, ");
                 rhs.accept(this);
