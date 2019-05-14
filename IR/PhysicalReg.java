@@ -4,6 +4,7 @@ package IR;
 
 public abstract class PhysicalReg extends CommonReg {
     public abstract String getName();
+    public abstract String getLowbitName();
     public abstract boolean isGeneral();
     public abstract boolean isCallerSave();
     public abstract boolean isCalleeSave();

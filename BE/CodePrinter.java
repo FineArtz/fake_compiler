@@ -27,9 +27,10 @@ public class CodePrinter implements IRVisitor {
     private Map<BasicBlock, String> labels = new HashMap<>();
     private Map<StaticData, String> sdata = new HashMap<>();
     private Map<String, Integer> bbCount = new HashMap<>();
-    private boolean inStatic;
-    private boolean isDest;
-    private boolean hasBracket;
+    private boolean inStatic = false;
+    private boolean isDest = false;
+    private boolean hasBracket = false;
+    private boolean needLowbit = false;
     private PhysicalReg pr1, pr2;
 
     @Override
@@ -153,6 +154,50 @@ public class CodePrinter implements IRVisitor {
                 return;
             case DIV:
             case MOD:
+                if (rhs instanceof CONST) {
+                    long magic = 33;
+                    while (magic < 63 && (1L << magic) / ((CONST)rhs).getVal() < 2147483647) {
+                        ++magic;
+                    }
+                    --magic;
+                    if (op == BINOP.OP.DIV) {
+                        needLowbit = true;
+                        addWithIndent("mov ecx, ");
+                        lhs.accept(this);
+                        addLine("");
+                        addLine("mov eax, ecx");
+                        addLine(String.format("mov edx, %d", (1L << magic) / ((CONST)rhs).getVal()));
+                        addLine("imul edx");
+                        addLine(String.format("sar edx, %d", magic - 32));
+                        addLine("sar ecx, 31");
+                        addLine("sub edx, ecx");
+                        needLowbit = false;
+                        addWithIndent("mov ");
+                        dest.accept(this);
+                        add(", rdx\n");
+                    }
+                    else {
+                        needLowbit = true;
+                        addWithIndent("mov esi, ");
+                        lhs.accept(this);
+                        addLine("");
+                        addLine("mov eax, esi");
+                        addLine(String.format("mov ecx, %d", (1L << magic) / ((CONST)rhs).getVal()));
+                        addLine("imul ecx");
+                        addLine("mov eax, edx");
+                        addLine(String.format("sar eax, %d", magic - 32));
+                        addLine("mov edx, esi");
+                        addLine("sar edx, 31");
+                        addLine("sub eax, edx");
+                        addLine(String.format("imul eax, eax, %d", ((CONST)rhs).getVal()));
+                        addLine("sub esi, eax");
+                        needLowbit = false;
+                        addWithIndent("mov ");
+                        dest.accept(this);
+                        add(", rsi\n");
+                    }
+                    return;
+                }
                 addWithIndent("mov rbx, ");
                 rhs.accept(this);
                 addLine("");
@@ -497,7 +542,7 @@ public class CodePrinter implements IRVisitor {
 
     @Override
     public void visit(PhysicalReg pr) {
-        add(pr.getName());
+        add((needLowbit ? pr.getLowbitName() : pr.getName()));
     }
 
     @Override
