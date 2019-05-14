@@ -48,7 +48,7 @@ public class Eliminator {
             if (visited.contains(fs)) {
                 continue;
             }
-            if (fs.c == null || fs.b == null || fs.f == null || fs.s == null) {
+            if (fs.c == null || fs.b == null || fs.f == null || fs.s == null || fs.f.getPred().isEmpty()) {
                 continue;
             }
             boolean elem = true;
