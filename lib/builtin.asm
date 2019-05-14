@@ -29,11 +29,11 @@ extern __printf_chk
 extern _GLOBAL_OFFSET_TABLE_
 
 
-SECTION .text   6
+SECTION .text   
 
 __print:
         lea     rdx, [rdi+8H]
-        lea     rsi, [rel .LC0]
+        lea     rsi, [rel LC0]
         mov     edi, 1
         xor     eax, eax
         jmp     __printf_chk
@@ -518,7 +518,7 @@ __getString:
         sub     rsp, 8
         call    malloc
         lea     rbx, [rax+8H]
-        lea     rdi, [rel .LC0]
+        lea     rdi, [rel LC0]
         mov     rbp, rax
         xor     eax, eax
         mov     rsi, rbx
@@ -1102,15 +1102,15 @@ L_057:  movd    xmm4, dword [rsp+0CH]
         sub     edi, eax
         add     rax, 8
         mov     r8d, edi
-        movdqa  xmm3, oword [rel .LC2]
+        movdqa  xmm3, oword [rel LC2]
         pshufd  xmm0, xmm4, 00H
         lea     r9, [rbp+rax]
-        movdqa  xmm2, oword [rel .LC3]
+        movdqa  xmm2, oword [rel LC3]
         shr     r8d, 4
         add     rax, rbx
         xor     edx, edx
         xor     ecx, ecx
-        paddd   xmm0, oword [rel .LC1]
+        paddd   xmm0, oword [rel LC1]
 
 
 
@@ -1441,11 +1441,9 @@ SECTION .bss
 
 SECTION .rodata.str1.1 
 
-.LC0:
+LC0:
         db 25H, 73H, 00H
 
-
-SECTION .text.startup 6
 
 
 
@@ -1455,18 +1453,18 @@ REG_SIZE:
         dd 00000008H
 
 
-SECTION .rodata.cst16 6
+SECTION .rodata.cst16 
 
 ALIGN   16
-.LC1:
+LC1:
         dd 00000000H, 00000001H
         dd 00000002H, 00000003H
 
-.LC2:
+LC2:
         dq 0000001000000010H
         dq 0000001000000010H
 
-.LC3:
+LC3:
         dq 0000000D0000000DH
         dq 0000000D0000000DH
 
