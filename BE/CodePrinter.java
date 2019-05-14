@@ -155,8 +155,8 @@ public class CodePrinter implements IRVisitor {
             case DIV:
             case MOD:
                 if (rhs instanceof CONST) {
-                    long magic = 33;
-                    while (magic < 63 && (1L << magic) / ((CONST)rhs).getVal() < 2147483647) {
+                    long magic = 32;
+                    while (magic < 63 && (1L << magic) / ((CONST)rhs).getVal() < (1L << 31)) {
                         ++magic;
                     }
                     --magic;
@@ -166,9 +166,11 @@ public class CodePrinter implements IRVisitor {
                         lhs.accept(this);
                         addLine("");
                         addLine("mov eax, ecx");
-                        addLine(String.format("mov edx, %d", (1L << magic) / ((CONST)rhs).getVal()));
+                        addLine(String.format("mov edx, %d", (1L << magic) / ((CONST)rhs).getVal() + 1));
                         addLine("imul edx");
-                        addLine(String.format("sar edx, %d", magic - 32));
+                        if (magic > 32) {
+                            addLine(String.format("sar edx, %d", magic - 32));
+                        }
                         addLine("sar ecx, 31");
                         addLine("sub edx, ecx");
                         needLowbit = false;
@@ -182,10 +184,12 @@ public class CodePrinter implements IRVisitor {
                         lhs.accept(this);
                         addLine("");
                         addLine("mov eax, esi");
-                        addLine(String.format("mov ecx, %d", (1L << magic) / ((CONST)rhs).getVal()));
+                        addLine(String.format("mov ecx, %d", (1L << magic) / ((CONST)rhs).getVal() + 1));
                         addLine("imul ecx");
                         addLine("mov eax, edx");
-                        addLine(String.format("sar eax, %d", magic - 32));
+                        if (magic > 32) {
+                            addLine(String.format("sar eax, %d", magic - 32));
+                        }
                         addLine("mov edx, esi");
                         addLine("sar edx, 31");
                         addLine("sub eax, edx");
