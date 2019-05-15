@@ -372,6 +372,12 @@ public class PreTransformer {
     }
 
     private void transformInline() {
+        for (Function f : root.funcs.values()) {
+            FuncInfo fi = funcInfo.get(f);
+            if (f.rcallee.contains(f)) {
+                fi.isSelfR = true;
+            }
+        }
         countInst();
         List<BasicBlock> blocks = new ArrayList<>();
         List<String> useless = new ArrayList<>();
