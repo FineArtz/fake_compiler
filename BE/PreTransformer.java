@@ -279,6 +279,12 @@ public class PreTransformer {
                         nef.insertPred(i.copy(rename));
                     }
                 }
+                if (i instanceof CALL) {
+                    FuncInfo ffi = funcInfo.get(((CALL)i).getFunc());
+                    if (ffi != null) {
+                        ++ffi.calledCnt;
+                    }
+                }
             }
         }
         if (!c.getBB().isEnd()) {
