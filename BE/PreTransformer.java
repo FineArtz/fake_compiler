@@ -11,6 +11,9 @@ public class PreTransformer {
     private IRRoot root;
     private Function f;
 
+    private static final int MAX_INST = 40;
+    private static final int MAX_CALLER_INST = 65536;
+
     public PreTransformer(IRRoot r) {
         root = r;
     }
@@ -20,6 +23,9 @@ public class PreTransformer {
         Set<StaticData> ruseStatic = new HashSet<>();
         Set<StaticData> rdefStatic = new HashSet<>();
         Set<StaticData> writtenStatic = new HashSet<>();
+        int instCnt = 0;
+        int calledCnt = 0;
+        boolean isSelfR = false;
     }
 
     private Map<Function, FuncInfo> funcInfo = new HashMap<>();
@@ -33,9 +39,27 @@ public class PreTransformer {
         return vr;
     }
 
+    private void countInst() {
+        for (Function f : root.funcs.values()) {
+            FuncInfo fi = funcInfo.get(f);
+            for (BasicBlock b : f.getrPostOrder()) {
+                for (Inst i = b.getHead(); i != null; i = i.getSucc()) {
+                    ++fi.instCnt;
+                    if (i instanceof CALL) {
+                        FuncInfo calleeI = funcInfo.get(((CALL)i).getFunc());
+                        if (calleeI != null && !((CALL)i).getFunc().isBuiltIn) {
+                            ++calleeI.calledCnt;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void dataInFunction() {
-        FuncInfo fi = new FuncInfo();
-        funcInfo.put(f, fi);
+        //FuncInfo fi = new FuncInfo();
+        //funcInfo.put(f, fi);
+        FuncInfo fi = funcInfo.get(f);
         Map<CommonReg, CommonReg> rename = new HashMap<>();
 
         for (BasicBlock b : f.getrPostOrder()) {
@@ -88,6 +112,12 @@ public class PreTransformer {
         for (Function rc : f.rcallee) {
             fi.ruseStatic.addAll(funcInfo.get(rc).staticReg.keySet());
             fi.rdefStatic.addAll(funcInfo.get(rc).writtenStatic);
+        }
+    }
+
+    private void copyReg(Reg r, Map<Object, Object> map) {
+        if (!map.containsKey(r)) {
+            map.put(r, r.copy());
         }
     }
 
@@ -166,6 +196,110 @@ public class PreTransformer {
         }
     }
 
+    private Inst callInFunction(CALL c) {
+        Function caller = c.getBB().getParent();
+        Function callee = c.getFunc();
+        Map<Object, Object> rename = new HashMap<>();
+        List<BasicBlock> blocks = callee.getrPostOrder();
+
+        BasicBlock exitBB = callee.getTail();
+        BasicBlock newExitBB = new BasicBlock(caller, exitBB.getName());
+        rename.put(exitBB, newExitBB);
+        rename.put(callee.getHead(), c.getBB());
+        if (caller.getTail() == c.getBB()) {
+            caller.setTail(newExitBB);
+        }
+
+        // move instructions of caller
+        Map<Object, Object> move = new HashMap<>();
+        move.put(c.getBB(), newExitBB);
+        for (Inst i = c.getSucc(); i != null; i = i.getSucc()) {
+            if (i instanceof JumpInst) {
+                newExitBB.addJumpInst(((JumpInst)i).copy(move));
+                c.getBB().rmvJumpInst();
+            }
+            else {
+                newExitBB.addInst(i.copy(move));
+                i.remove();
+            }
+        }
+        assert newExitBB.isEnd();
+        Inst nef = newExitBB.getHead();
+
+        // set arguments
+        for (int i = 0; i < callee.args.size(); ++i) {
+            VirtualReg a = callee.args.get(i);
+            VirtualReg b = a.copy();
+            c.insertPred(new MOVE(c.getBB(), b, c.getArgs().get(i)));
+            rename.put(a, b);
+        }
+
+        c.remove();
+        for (BasicBlock b : blocks) {
+            if (!rename.containsKey(b)) {
+                rename.put(b, new BasicBlock(caller, b.getName()));
+            }
+        }
+        for (BasicBlock b : blocks) {
+            BasicBlock nb = (BasicBlock)rename.get(b);
+            for (IRRoot.ForStruct fs : root.fors) {
+                if (fs.f == b) {
+                    fs.f = nb;
+                }
+                if (fs.s == b) {
+                    fs.s = nb;
+                }
+                if (fs.b == b) {
+                    fs.b = nb;
+                }
+                if (fs.c == b) {
+                    fs.b = nb;
+                }
+            }
+            for (Inst i = b.getHead(); i != null; i = i.getSucc()) {
+                for (Reg used : i.getUsedReg()) {
+                    copyReg(used, rename);
+                }
+                CommonReg d = i.getDefinedReg();
+                if (d != null) {
+                    copyReg(d, rename);
+                }
+                if (newExitBB != nb) {
+                    if (i instanceof JumpInst) {
+                        if (!(i instanceof RETURN)) {
+                            nb.addJumpInst(((JumpInst)i).copy(rename));
+                        }
+                    }
+                    else {
+                        nb.addInst(i.copy(rename));
+                    }
+                }
+                else {
+                    if (!(i instanceof RETURN)) {
+                        nef.insertPred(i.copy(rename));
+                    }
+                }
+            }
+        }
+        if (!c.getBB().isEnd()) {
+            c.getBB().addJumpInst(new JUMP(c.getBB(), newExitBB));
+        }
+
+        // copy return
+        RETURN ret = callee.returnList.get(0);
+        if (ret.getRetVal() != null) {
+            nef.insertPred(new MOVE(newExitBB, c.getDest(), (Reg)rename.get(ret.getRetVal())));
+        }
+
+        return newExitBB.getHead();
+    }
+
+    private void initialize() {
+        for (Function f : root.funcs.values()) {
+            funcInfo.put(f, new FuncInfo());
+        }
+    }
+
     private void transformStaticData() {
         for (Function ff : root.funcs.values()) {
             f = ff;
@@ -237,8 +371,58 @@ public class PreTransformer {
         }
     }
 
+    private void transformInline() {
+        countInst();
+        List<BasicBlock> blocks = new ArrayList<>();
+        List<String> useless = new ArrayList<>();
+        boolean flag = true;
+        while (flag) {
+            flag = false;
+            useless.clear();
+            for (Function f : root.funcs.values()) {
+                FuncInfo fi = funcInfo.get(f);
+                blocks.clear();
+                blocks.addAll(f.getrPostOrder());
+                for (BasicBlock b : blocks) {
+                    Inst succ = null;
+                    for (Inst i = b.getHead(); i != null; i = succ) {
+                        succ = i.getSucc();
+                        if (i instanceof CALL) {
+                            CALL call = (CALL)i;
+                            Function callee = call.getFunc();
+                            FuncInfo calleeI = funcInfo.get(callee);
+                            if (callee.isBuiltIn || callee.getFunc().pname != null || calleeI.isSelfR) {
+                                continue;
+                            }
+                            if (calleeI.instCnt <= MAX_INST && calleeI.instCnt + fi.instCnt <= MAX_CALLER_INST) {
+                                succ = callInFunction(call);
+                                flag = true;
+                                fi.instCnt += calleeI.instCnt;
+                                --calleeI.calledCnt;
+                                if (calleeI.calledCnt == 0) {
+                                    useless.add(callee.getName());
+                                }
+                            }
+                        }
+                    }
+                    f.clearOrder();
+                    f.getrPostOrder();
+                }
+            }
+            for (String n : useless) {
+                root.funcs.remove(n);
+            }
+        }
+        for (Function f : root.funcs.values()) {
+            f.updateCallee(root);
+        }
+        root.updateRCallee();
+    }
+
     public void run() {
+        initialize();
         transformBinop();
+        transformInline();
         transformStaticData();
         transformArguments();
     }

@@ -63,4 +63,9 @@ public class MOVE extends Inst {
         }
         reloadRegs();
     }
+
+    @Override
+    public MOVE copy(Map<Object, Object> map) {
+        return new MOVE((BasicBlock)map.getOrDefault(bb, bb), (CommonReg)map.getOrDefault(dest, dest), (Reg)map.getOrDefault(src, src));
+    }
 }

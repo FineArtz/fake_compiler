@@ -54,4 +54,9 @@ public class ALLOC extends Inst {
         }
         reloadRegs();
     }
+
+    @Override
+    public ALLOC copy(Map<Object, Object> map) {
+        return new ALLOC((BasicBlock)map.getOrDefault(bb, bb), (VirtualReg)map.getOrDefault(dest, dest), (Reg)map.getOrDefault(size, size));
+    }
 }

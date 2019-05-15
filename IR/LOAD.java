@@ -96,4 +96,9 @@ public class LOAD extends Inst {
         }
         reloadRegs();
     }
+
+    @Override
+    public LOAD copy(Map<Object, Object> map) {
+        return (isStatic ? new LOAD((BasicBlock)map.getOrDefault(bb, bb), (CommonReg)map.getOrDefault(dest, dest), size, (StaticData)map.getOrDefault(addr, addr), isAddr) : new LOAD((BasicBlock)map.getOrDefault(bb, bb), (CommonReg)map.getOrDefault(dest, dest), size, (Reg)map.getOrDefault(addr, addr), offset));
+    }
 }

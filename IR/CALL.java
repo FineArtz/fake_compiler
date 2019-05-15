@@ -2,6 +2,8 @@
 
 package IR;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -74,5 +76,12 @@ public class CALL extends Inst {
             }
         }
         reloadRegs();
+    }
+
+    @Override
+    public CALL copy(Map<Object, Object> map) {
+        List<Reg> cargs = new ArrayList<>();
+        args.forEach(x -> cargs.add((Reg)map.getOrDefault(x, x)));
+        return new CALL((BasicBlock)map.getOrDefault(bb, bb), func, cargs, (VirtualReg)map.getOrDefault(dest, dest));
     }
 }

@@ -42,4 +42,9 @@ public class PUSH extends Inst{
 
     @Override
     public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
+
+    @Override
+    public PUSH copy(Map<Object, Object> map) {
+        return null;
+    }
 }

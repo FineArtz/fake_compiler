@@ -102,4 +102,9 @@ public class BINOP extends Inst {
         }
         reloadRegs();
     }
+
+    @Override
+    public BINOP copy(Map<Object, Object> map) {
+        return new BINOP((BasicBlock)map.getOrDefault(bb, bb), op, (Reg)map.getOrDefault(lhs, lhs), (Reg)map.getOrDefault(rhs, rhs), (VirtualReg)map.getOrDefault(dest, dest));
+    }
 }

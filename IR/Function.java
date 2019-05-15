@@ -269,12 +269,18 @@ public class Function {
     }
 
     public void clearOrder() {
-        rPostOrder.clear();
-        rPrevOrder.clear();
-        prevOrder.clear();
-        rPostOrder = null;
-        rPrevOrder = null;
-        prevOrder = null;
+        if (rPostOrder != null) {
+            rPostOrder.clear();
+            rPostOrder = null;
+        }
+        if (rPrevOrder != null) {
+            rPrevOrder.clear();
+            rPrevOrder = null;
+        }
+        if (prevOrder != null) {
+            prevOrder.clear();
+            prevOrder = null;
+        }
     }
 
     public List<BasicBlock> getPrevOrder() {

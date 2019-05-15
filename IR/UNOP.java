@@ -70,4 +70,9 @@ public class UNOP extends Inst {
         }
         reloadRegs();
     }
+
+    @Override
+    public UNOP copy(Map<Object, Object> map) {
+        return new UNOP((BasicBlock)map.getOrDefault(bb, bb), op, (Reg)map.getOrDefault(operand, operand), (CommonReg)map.getOrDefault(dest, dest));
+    }
 }

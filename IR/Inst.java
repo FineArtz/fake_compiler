@@ -91,4 +91,5 @@ public abstract class Inst {
     public abstract CommonReg getDefinedReg();
     public abstract void setDefinedReg(CommonReg r);
     public abstract void renameUsedReg(Map<CommonReg, CommonReg> map);
+    public abstract Inst copy(Map<Object, Object> map);
 }

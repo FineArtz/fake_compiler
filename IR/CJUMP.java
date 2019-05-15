@@ -67,4 +67,9 @@ public class CJUMP extends JumpInst {
         }
         reloadRegs();
     }
+
+    @Override
+    public CJUMP copy(Map<Object, Object> map) {
+        return new CJUMP((BasicBlock)map.getOrDefault(bb, bb), (Reg)map.getOrDefault(cond, cond), (BasicBlock)map.getOrDefault(thenBB, thenBB), (BasicBlock)map.getOrDefault(elseBB, elseBB));
+    }
 }

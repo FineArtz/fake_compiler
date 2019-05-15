@@ -95,4 +95,9 @@ public class STORE extends Inst {
         }
         reloadRegs();
     }
+
+    @Override
+    public STORE copy(Map<Object, Object> map) {
+        return (isStatic ? new STORE((BasicBlock)map.getOrDefault(bb, bb), (Reg)map.getOrDefault(value, value), size, (StaticData)map.getOrDefault(addr, addr)) : new STORE((BasicBlock)map.getOrDefault(bb, bb), (Reg)map.getOrDefault(value, value), size, (Reg)map.getOrDefault(addr, addr), offset));
+    }
 }

@@ -65,4 +65,9 @@ public class PhiInst extends Inst {
 
     @Override
     public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
+
+    @Override
+    public PhiInst copy(Map<Object, Object> map) {
+        return new PhiInst((BasicBlock)map.getOrDefault(bb, bb), (VirtualReg)map.getOrDefault(dest, dest));
+    }
 }

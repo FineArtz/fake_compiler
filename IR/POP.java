@@ -42,4 +42,9 @@ public class POP extends Inst {
 
     @Override
     public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
+
+    @Override
+    public POP copy(Map<Object, Object> map) {
+        return null;
+    }
 }

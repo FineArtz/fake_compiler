@@ -40,4 +40,9 @@ public class JUMP extends JumpInst {
 
     @Override
     public void renameUsedReg(Map<CommonReg, CommonReg> map) {}
+
+    @Override
+    public JUMP copy(Map<Object, Object> map) {
+        return new JUMP((BasicBlock)map.getOrDefault(bb, bb), (BasicBlock)map.getOrDefault(target, target));
+    }
 }

@@ -52,4 +52,9 @@ public class RETURN extends JumpInst {
         }
         reloadRegs();
     }
+
+    @Override
+    public RETURN copy(Map<Object, Object> map) {
+        return new RETURN((BasicBlock)map.getOrDefault(bb, bb), (Reg)map.getOrDefault(retVal, retVal));
+    }
 }
