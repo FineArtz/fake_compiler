@@ -447,7 +447,7 @@ public class PreTransformer {
         removeNullInit();
         initialize();
         transformBinop();
-        transformInline();
+        //transformInline();
         transformStaticData();
         transformArguments();
     }
