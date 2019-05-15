@@ -397,7 +397,7 @@ public class PreTransformer {
                             CALL call = (CALL)i;
                             Function callee = call.getFunc();
                             FuncInfo calleeI = funcInfo.get(callee);
-                            if (callee.isBuiltIn || callee.getFunc().pname != null || calleeI.isSelfR) {
+                            if (callee.isBuiltIn || callee.getName().contains(".") || calleeI.isSelfR) {
                                 continue;
                             }
                             if (calleeI.instCnt <= MAX_INST && calleeI.instCnt + fi.instCnt <= MAX_CALLER_INST) {
