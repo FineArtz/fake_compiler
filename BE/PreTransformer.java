@@ -288,7 +288,7 @@ public class PreTransformer {
         // copy return
         RETURN ret = callee.returnList.get(0);
         if (ret.getRetVal() != null) {
-            nef.insertPred(new MOVE(newExitBB, c.getDest(), (Reg)rename.get(ret.getRetVal())));
+            nef.insertPred(new MOVE(newExitBB, c.getDest(), (ret.getRetVal() instanceof CONST ? new CONST(((CONST)ret.getRetVal()).getVal()) : (Reg)rename.get(ret.getRetVal()))));
         }
 
         return newExitBB.getHead();
