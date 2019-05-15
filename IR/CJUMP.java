@@ -28,6 +28,11 @@ public class CJUMP extends JumpInst {
         return thenBB;
     }
 
+    public void setCond(Reg cond) {
+        this.cond = cond;
+        reloadRegs();
+    }
+
     public void setElseBB(BasicBlock elseBB) {
         this.elseBB = elseBB;
     }

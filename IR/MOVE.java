@@ -28,6 +28,11 @@ public class MOVE extends Inst {
         return src;
     }
 
+    public void setSrc(Reg src) {
+        this.src = src;
+        reloadRegs();
+    }
+
     public boolean isSame(MOVE m) {
         return (dest == m.dest && src == m.src);
     }

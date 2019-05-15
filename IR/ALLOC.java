@@ -23,6 +23,11 @@ public class ALLOC extends Inst {
         return size;
     }
 
+    public void setSize(Reg size) {
+        this.size = size;
+        reloadRegs();
+    }
+
     @Override
     public void accept(IRVisitor v) {
         v.visit(this);

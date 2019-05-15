@@ -17,6 +17,11 @@ public class RETURN extends JumpInst {
         return retVal;
     }
 
+    public void setRetVal(Reg retVal) {
+        this.retVal = retVal;
+        reloadRegs();
+    }
+
     @Override
     public void accept(IRVisitor v) {
         v.visit(this);

@@ -3,5 +3,5 @@
 package IR;
 
 public abstract class CommonReg extends Reg {
-
+    public Integer constValue = null;
 }

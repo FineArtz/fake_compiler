@@ -1306,4 +1306,16 @@ public class IRBuilder implements ASTVisitor {
         assign(be.rhs.rtype.type.getSize(), addr, offset, be.rhs, needMem);
         be.value = be.rhs.value;
     }
+
+    private void addMove(BasicBlock b, CommonReg d, Reg s) {
+        if (s instanceof CONST) {
+            d.constValue = ((CONST)s).getVal();
+        }
+        else if (s instanceof CommonReg && ((CommonReg)s).constValue != null) {
+            d.constValue = ((CommonReg)s).constValue;
+        }
+        else {
+            b.addInst(new MOVE(b, d, s));
+        }
+    }
 }

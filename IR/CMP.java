@@ -27,6 +27,10 @@ public class CMP extends Inst {
         reloadRegs();
     }
 
+    public void setOp(OP op) {
+        this.op = op;
+    }
+
     public void setLhs(Reg l) {
         lhs = l;
         reloadRegs();

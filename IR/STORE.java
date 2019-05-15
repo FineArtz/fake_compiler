@@ -50,6 +50,11 @@ public class STORE extends Inst {
         this.offset = offset;
     }
 
+    public void setValue(Reg value) {
+        this.value = value;
+        reloadRegs();
+    }
+
     public boolean isSame(STORE s) {
         return (value == s.value && size == s.size && addr == s.addr && offset == s.offset);
     }

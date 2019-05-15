@@ -66,6 +66,11 @@ class Compiler {
         pt.run();
     }
 
+    void constPropagate() {
+        ConstProper sp = new ConstProper();
+        sp.visit(ir);
+    }
+
     void eliminate(int x) {
         Eliminator e = new Eliminator(ir);
         if (x == 0) {
