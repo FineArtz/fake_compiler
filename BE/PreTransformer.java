@@ -439,7 +439,10 @@ public class PreTransformer {
                 i = i.getSucc();
             }
             i.remove();
+            Function init = root.funcs.get("__init__");
             root.funcs.remove("__init__");
+            m.rcallee.remove(init);
+            m.callee.remove(init);
         }
     }
 
