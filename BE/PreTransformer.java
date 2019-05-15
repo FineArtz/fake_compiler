@@ -419,7 +419,20 @@ public class PreTransformer {
         root.updateRCallee();
     }
 
+    private void removeNullInit() {
+        if (root.data.isEmpty()) {
+            Function m = root.funcs.get("main");
+            Inst i = m.getHead().getHead();
+            while (!(i instanceof CALL && ((CALL)i).getFunc().getName().equals("__init__"))) {
+                i = i.getSucc();
+            }
+            i.remove();
+            root.funcs.remove("__init__");
+        }
+    }
+
     public void run() {
+        removeNullInit();
         initialize();
         transformBinop();
         transformInline();

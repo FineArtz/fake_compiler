@@ -259,7 +259,7 @@ public class Eliminator {
     }
 
     public void run() {
-        if (root.data.isEmpty()) {
+        /*if (root.data.isEmpty()) {
             Function m = root.funcs.get("main");
             Inst i = m.getHead().getHead();
             while (!(i instanceof CALL && ((CALL)i).getFunc().getName().equals("__init__"))) {
@@ -267,7 +267,7 @@ public class Eliminator {
             }
             i.remove();
             root.funcs.remove("__init__");
-        }
+        }*/
         for (Function f : root.funcs.values()) {
             la.analyseFunction(f);
         }
