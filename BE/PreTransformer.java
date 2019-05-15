@@ -12,7 +12,7 @@ public class PreTransformer {
     private Function f;
 
     private static final int MAX_INST = 40;
-    private static final int MAX_CALLER_INST = 400;
+    private static final int MAX_CALLER_INST = 200;
 
     public PreTransformer(IRRoot r) {
         root = r;
