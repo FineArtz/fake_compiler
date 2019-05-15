@@ -50,8 +50,8 @@ public class Main {
         }
         compiler.buildAST();
         compiler.buildIR();
-        compiler.preTransform();
         compiler.constPropagate();
+        compiler.preTransform();
         compiler.eliminate(0);
         if (printIR) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
