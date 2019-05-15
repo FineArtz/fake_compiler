@@ -99,6 +99,8 @@ public class ConstProper implements IRVisitor {
                         break;
                 }
                 bo.getDest().constValue = res;
+                bo.insertPred(new MOVE(bo.getBB(), bo.getDest(), new CONST(res)));
+                bo.remove();
             } else if (lhs instanceof CONST && !(rhs instanceof CONST)) {
                 switch (bo.getOp()) {
                     case MUL:
@@ -164,6 +166,8 @@ public class ConstProper implements IRVisitor {
                         break;
                 }
                 cm.getDest().constValue = res;
+                cm.insertPred(new MOVE(cm.getBB(), cm.getDest(), new CONST(res)));
+                cm.remove();
             } else if (lhs instanceof CONST && !(rhs instanceof CONST)) {
                 cm.setLhs(rhs);
                 cm.setRhs(lhs);
@@ -242,20 +246,35 @@ public class ConstProper implements IRVisitor {
     public void visit(UNOP uo) {
         if (!retrace) {
             Reg opr = uo.getOperand();
+            CommonReg d = uo.getDest();
+            Integer c = null;
             if (opr instanceof CONST) {
-                uo.getDest().constValue = ((CONST) opr).getVal();
-            } else if (opr instanceof CommonReg && ((CommonReg) opr).constValue != null) {
                 switch (uo.getOp()) {
                     case BNOT:
-                        uo.getDest().constValue = ~((CommonReg) opr).constValue;
+                        c = ~((CONST)opr).getVal();
                         break;
                     case NEG:
-                        uo.getDest().constValue = -((CommonReg) opr).constValue;
+                        c = -((CONST)opr).getVal();
                         break;
                 }
-                uo.setOprand(new CONST(((CommonReg) opr).constValue));
-            } else {
+            }
+            else if (opr instanceof CommonReg && ((CommonReg)opr).constValue != null) {
+                switch (uo.getOp()) {
+                    case BNOT:
+                        c = ~((CommonReg)opr).constValue;
+                        break;
+                    case NEG:
+                        c = -((CommonReg)opr).constValue;
+                        break;
+                }
+                uo.setOprand(new CONST(((CommonReg)opr).constValue));
+            }
+            else {
                 uo.getDest().constValue = null;
+            }
+            if (c != null) {
+                uo.insertPred(new MOVE(uo.getBB(), d, new CONST(c)));
+                uo.remove();
             }
         }
         else {
