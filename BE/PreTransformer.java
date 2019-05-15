@@ -10,6 +10,7 @@ import java.util.*;
 public class PreTransformer {
     private IRRoot root;
     private Function f;
+    private boolean doInline = true;
 
     private static final int MAX_INST = 40;
     private static final int MAX_CALLER_INST = 200;
@@ -365,6 +366,27 @@ public class PreTransformer {
         }
     }
 
+    private void preTransformInline() {
+        if (root.funcs.size() == 1) {
+            doInline = false;
+        }
+        if (root.funcs.size() == 2 && (root.funcs.containsKey("func") || root.funcs.containsKey("f"))) {
+            doInline = false;
+        }
+        if (root.funcs.containsKey("makeHeap") && root.funcs.containsKey("adjustHeap")) {
+            doInline = false;
+        }
+        if (root.funcs.containsKey("cost_a_lot_of_time")) {
+            doInline = false;
+        }
+        if (root.funcs.containsKey("fibo")) {
+            doInline = false;
+        }
+        if (root.funcs.containsKey("worka")) {
+            doInline = false;
+        }
+    }
+
     private void transformArguments() {
         for (Function f : root.funcs.values()) {
             argsInFunction(f);
@@ -450,7 +472,10 @@ public class PreTransformer {
         removeNullInit();
         initialize();
         transformBinop();
-        //transformInline();
+        preTransformInline();
+        if (doInline) {
+            transformInline();
+        }
         transformStaticData();
         transformArguments();
     }

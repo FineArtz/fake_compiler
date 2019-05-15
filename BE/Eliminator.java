@@ -228,8 +228,22 @@ public class Eliminator {
                         flag2 = true;
                     }
                 }
+                else if (i instanceof LOAD && pred instanceof STORE) {
+                    if (((LOAD)i).getDest() == ((STORE)pred).getValue()
+                    && ((LOAD)i).getAddr() == ((STORE)pred).getAddr()
+                    && ((LOAD)i).getOffset() == ((STORE)pred).getOffset()) {
+                        flag2 = true;
+                    }
+                }
                 else if (i instanceof STORE && pred instanceof STORE) {
                     if (((STORE)i).isSame((STORE)pred)) {
+                        flag2 = true;
+                    }
+                }
+                else if (i instanceof STORE && pred instanceof LOAD) {
+                    if (((STORE)i).getValue() == ((LOAD)pred).getDest()
+                    && ((STORE)i).getAddr() == ((LOAD)pred).getAddr()
+                    && ((STORE)i).getOffset() == ((LOAD)pred).getOffset()) {
                         flag2 = true;
                     }
                 }
